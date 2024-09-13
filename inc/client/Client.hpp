@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/13 17:14:32 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/13 18:01:52 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,41 @@ class Client
         int clientFd;
         struct sockaddr_in clientAddr; // Server address, arpa/inet.h
         
+        // Maps
+        std::map<std::string, Channel *> channels; // Client channels
+
+    public:
+        // Forma canonica implementada
+        Client(struct sockaddr_in client, int fd);
+        ~Client();
+
+        // Getters, el poner referencias constantes o no, es para que no se pueda modificar el valor, dependera del desarrollo posterior
+        std::string const &getNickname() const;
+        std::string const &getUsername() const;
+        std::string const &getRealname() const;
+        bool const &getRegistered() const;
+        bool const &getActive() const;
+        int const &getLevel() const;
+        std::map<std::string, Channel *> const &getChannels() const;
+        Channel *getChannelByName(std::string const &name) const;
+        int getClientFd() const;
+        struct sockaddr_in getClientAddr() const;
+
+        // Setters
+        void setNickname(std::string const &nickname);
+        void setUsername(std::string const &username);
+        void setRealname(std::string const &realname);
+        void setRegistered(bool registered);
+        void setActive(bool active);
+        void setLevel(int level);
+        void setClientFd(int clientFd);
+        void setClientAddr(struct sockaddr_in clientAddr);
+
+        // Client socket
+
+        // Client channels
+        void insertChannel(std::string const &name, Channel *channel);
+        void eraseChannel(std::string const &name);
+        void leaveChannel(std::string const &name);
+        void leaveAllChannels();        
 };
