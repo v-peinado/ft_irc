@@ -6,11 +6,13 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 22:46:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 23:09:00 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <iostream>
+#include <cstdlib>
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -162,11 +164,29 @@ void Server::setServerAddr(struct sockaddr_in serverAddr)
 * ------------------------------- SERVER  ----------------------------------- *
 ******************************************************************************/
 
-void Server::startServer()
+void Server::startServer(char *port, char *password)
 {
-    // Inicializacion del server
+    this->setPort(atoi(port)); //no se puede atoi en c++98
+    this->setPassword(password);
+    this->setActive(true);
+    // Creacion del socket
+    this->setServerFd(socket(AF_INET, SOCK_STREAM, 0));
+    if (this->getServerFd() == -1)
+    {
+        std::cerr << "Error: socket" << std::endl;
+        exit(1);
+    }
+    this->_serverAddr.sin_family = AF_INET; // ipv4
+    this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
+    this->_serverAddr.sin_port = htons(this->getPort()); // Puerto
+    
+    // Configuracion del socket
+    // Bind del socket
+    // Listen del socket
+    // Accept del socket
+    // Poll
+    // Cierre del socket
 }
-
 void Server::stopServer()
 {
     // Parada del server

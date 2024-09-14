@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 22:44:42 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 23:03:17 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ class Server
             void setActive(bool active);
             void setServerFd(int serverFd);
             void setServerAddr(struct sockaddr_in serverAddr);
-
+        // Server config, init, end, restart...
+            void startServer(char *port, char *password);
         // Server config, new channels, users, commands
             //  Channel * newChannel(std::string const &name);
 
