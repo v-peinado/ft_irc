@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 18:48:27 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 22:46:13 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,38 +81,38 @@ Client *Server::getUserByFd(int fd)
         return NULL;  // Devuelve null si no se encuentra
 }
 
-Channel *Server::getChannelByName(std::string const &name)
-{
-    std::map<std::string, Channel *>::iterator it = this->_channels.find(name);
-    if (it != this->_channels.end())
-        return it->second;
-    else
-        return NULL;  
-}
+// Channel *Server::getChannelByName(std::string const &name)
+// {
+//     std::map<std::string, Channel *>::iterator it = this->_channels.find(name);
+//     if (it != this->_channels.end())
+//         return it->second;
+//     else
+//         return NULL;  
+// }
 
-ACommand *Server::getCommandByName(std::string const &name)
-{
-    std::map<std::string, ACommand *>::iterator it = this->_commands.find(name);
-    if (it != this->_commands.end())
-        return it->second;
-    else
-        return NULL;
-}
+// ACommand *Server::getCommandByName(std::string const &name)
+// {
+//     std::map<std::string, ACommand *>::iterator it = this->_commands.find(name);
+//     if (it != this->_commands.end())
+//         return it->second;
+//     else
+//         return NULL;
+// }
 
 std::map<int , Client *> const &Server::getUsers() const
 {
     return this->_users;
 }
 
-std::map<std::string , Channel *> const &Server::getChannels() const
-{
-    return this->_channels;
-}
+// std::map<std::string , Channel *> const &Server::getChannels() const
+// {
+//     return this->_channels;
+// }
 
-std::map<std::string , ACommand *> const &Server::getCommands() const
-{
-    return this->_commands;
-}
+// std::map<std::string , ACommand *> const &Server::getCommands() const
+// {
+//     return this->_commands;
+// }
 
 /******************************************************************************
 * ------------------------------- SETTERS ----------------------------------- *
@@ -197,15 +197,15 @@ void Server::insertUser(int fd, Client *user)
     // Inserta un usuario
 }
 
-void Server::insertChannel(std::string const &name, Channel *channel)
-{
-    // Inserta un canal
-}
+// void Server::insertChannel(std::string const &name, Channel *channel)
+// {
+//     // Inserta un canal
+// }
 
-void Server::insertCommand(std::string const &name, ACommand *command)
-{
-    // Inserta un comando
-}
+// void Server::insertCommand(std::string const &name, ACommand *command)
+// {
+//     // Inserta un comando
+// }
 
 void Server::deleteUser(int fd)
 {
@@ -217,10 +217,10 @@ void Server::deleteChannel(std::string const &name)
     // Elimina un canal
 }
 
-Channel *Server::newChannel(std::string const &name)
-{
-    // Crea un nuevo canal
-}
+// Channel *Server::newChannel(std::string const &name)
+// {
+//     // Crea un nuevo canal
+// }
 
 /******************************************************************************
 * --------------------------------- POLL  ----------------------------------- *

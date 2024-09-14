@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 18:50:40 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 22:44:42 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ class Server
 
         // Maps
             std::map<int , Client *> _users; // Server users
-            std::map<std::string , Channel *> _channels; // Server channels
-            std::map<std::string , ACommand *> _commands; // Server commands
+           // std::map<std::string , Channel *> _channels; // Server channels
+           // std::map<std::string , ACommand *> _commands; // Server commands
         // Server config(max users, max channels, etc)
            
     public:
@@ -67,11 +67,11 @@ class Server
             int const &getServerFd() const;
             struct sockaddr_in const &getServerAddr() const;
             Client *getUserByFd(int fd);
-            Channel *getChannelByName(std::string const &name);
-            ACommand *getCommandByName(std::string const &name);
+            // Channel *getChannelByName(std::string const &name);
+            // ACommand *getCommandByName(std::string const &name);
             std::map<int , Client *> const &getUsers() const;
-            std::map<std::string , Channel *> const &getChannels() const;
-            std::map<std::string , ACommand *> const &getCommands() const;
+            //  std::map<std::string , Channel *> const &getChannels() const;
+            //  std::map<std::string , ACommand *> const &getCommands() const;
         // Setters
             void setPort(int port);
             void setServerName(std::string const &serverName);
@@ -83,12 +83,12 @@ class Server
             void setServerAddr(struct sockaddr_in serverAddr);
 
         // Server config, new channels, users, commands
-            Channel * newChannel(std::string const &name);
+            //  Channel * newChannel(std::string const &name);
 
         // Server config, insert channels, users, commands
             void insertUser(int fd, Client *user);
-            void insertChannel(std::string const &name, Channel *channel);
-            void insertCommand(std::string const &name, ACommand *command);
+            //  void insertChannel(std::string const &name, Channel *channel);
+            //  void insertCommand(std::string const &name, ACommand *command);
             
         // Server config, delete channels, users, commands
             void deleteUser(int fd);

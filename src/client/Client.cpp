@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 18:26:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 22:49:49 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string const &Client::getUsername() const
 
 std::string const &Client::getRealname() const
 {
-    return this->_realame;
+    return this->_realname;
 }
 
 bool const &Client::getRegistered() const
@@ -62,26 +62,26 @@ int const &Client::getLevel() const
     return this->_level;
 }
 
-std::map<std::string, Channel *> const &Client::getChannels() const
-{
-    return this->_channels;
-}
+// std::map<std::string, Channel *> const &Client::getChannels() const
+// {
+//     return this->_channels;
+// }
 
-Channel *Client::getChannelByName(std::string const &name) const
-{
-    std::map<std::string, ACommand *>::iterator it = this->_commands.find(name); 
-    if (it != this->_commands.end())
-        return it->second;
-    else
-        return NULL;
-}
+// Channel *Client::getChannelByName(std::string const &name) const
+// {
+//     std::map<std::string, ACommand *>::iterator it = this->_commands.find(name); 
+//     if (it != this->_commands.end())
+//         return it->second;
+//     else
+//         return NULL;
+// }
 
 int const &Client::getClientFd() const
 {
     return this->_clientFd;
 }
 
-struct Client::sockaddr_in const &Client::getClientAddr() const
+struct sockaddr_in const &Client::getClientAddr() const
 {
     return this->_clientAddr;
 }
@@ -134,24 +134,24 @@ void Client::setClientAddr(struct sockaddr_in clientAddr)
 * ---------------------------------- CHANNELS ------------------------------ *
 *****************************************************************************/
 
-void Client::insertChannel(std::string const &name, Channel *channel)
-{
-    this->_channels.insert(std::pair<std::string, Channel *>(name, channel));
-}
+// void Client::insertChannel(std::string const &name, Channel *channel)
+// {
+//     this->_channels.insert(std::pair<std::string, Channel *>(name, channel));
+// }
 
-void Client::eraseChannel(std::string const &name)
-{
-    this->_channels.erase(name);
-}
+// void Client::eraseChannel(std::string const &name)
+// {
+//     this->_channels.erase(name);
+// }
 
-void Client::leaveChannel(std::string const &name)
-{
-    //De momento es lo mismo que eraseChannel, pero en un futuro se podria hacer algo mas
-    this->_channels.erase(name);
-}
+// void Client::leaveChannel(std::string const &name)
+// {
+//     //De momento es lo mismo que eraseChannel, pero en un futuro se podria hacer algo mas
+//     this->_channels.erase(name);
+// }
 
-void Client::leaveAllChannels()
-{
-    //Liberar memoria de los canales, si se implementa,, modificacion en futuro segun necesidad
-    this->_channels.clear();
-}
+// void Client::leaveAllChannels()
+// {
+//     //Liberar memoria de los canales, si se implementa,, modificacion en futuro segun necesidad
+//     this->_channels.clear();
+// }

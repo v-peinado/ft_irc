@@ -6,7 +6,12 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:10:55 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 19:10:56 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 22:50:19 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+int main(int argc, char **argv)
+{
+    // Main
+    return 0;
+}
