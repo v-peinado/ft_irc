@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/13 17:21:51 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 18:05:48 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,79 +28,90 @@ Server::~Server()
     // Limpieza de maps, liberacion de memoria
 }
 
-
 /*****************************************************************************
 * ---------------------------------- GETTERS ------------------------------- *
 *****************************************************************************/
 
 Server::getPort() const
 {
-    return this->port;
+    return this->_port;
 }
 
 std::string const &Server::getServerName() const
 {
-    return this->serverName;
+    return this->_serverName;
 }
 
 std::string const &Server::getPassword() const
 {
-    return this->password;
+    return this->_password;
 }
 
 std::string const &Server::getWelcomeMessage() const
 {
-    return this->welcomeMessage;
+    return this->_welcomeMessage;
 }
 
 std::string const &Server::getTimeServer() const
 {
-    return this->timeServer;
+    return this->_timeServer;
 }
 
 bool const &Server::getActive() const
 {
-    return this->active;
+    return this->_active;
 }
 
 int const &Server::getServerFd() const
 {
-    return this->serverFd;
+    return this->_serverFd;
 }
 
 struct sockaddr_in const &Server::getServerAddr() const
 {
-    return this->serverAddr;
+    return this->_serverAddr;
 }
 
 AClient *Server::getUserByFd(int fd)
 {
-    return this->users[fd];
+    std::map<int, AClient *>::iterator it = this->_users.find(fd);    
+    if (it != this->_users.end()) 
+        return it->second;  // Devuelve el puntero al usuario si existe
+    else 
+        return NULL;  // Devuelve null si no se encuentra
 }
 
 Channel *Server::getChannelByName(std::string const &name)
 {
-    return this->channels[name];
+    std::map<std::string, Channel *>::iterator it = this->_channels.find(name);
+    if (it != this->_channels.end())
+        return it->second;
+    else
+        return NULL;  
 }
 
 ACommand *Server::getCommandByName(std::string const &name)
 {
-    return this->commands[name];
+    std::map<std::string, ACommand *>::iterator it = this->_commands.find(name);
+    if (it != this->_commands.end())
+        return it->second;
+    else
+        return NULL;
 }
 
 std::map<int , AClient *> const &Server::getUsers() const
 {
-    return this->users;
+    return this->_users;
 }
 
 std::map<string::string , Channel *> const &Server::getChannels() const
 {
-    return this->channels;
+    return this->_channels;
 }
 
 std::map<string::string , ACommand *> const &Server::getCommands() const
 {
-    return this->commands;
+    return this->_commands;
 }
 
 /******************************************************************************
@@ -109,42 +120,42 @@ std::map<string::string , ACommand *> const &Server::getCommands() const
 
 void Server::setPort(int port)
 {
-    this->port = port;
+    this->_port = port;
 }
 
 void Server::setServerName(std::string const &serverName)
 {
-    this->serverName = serverName;
+    this->_serverName = serverName;
 }
 
 void Server::setPassword(std::string const &password)
 {
-    this->password = password;
+    this->_password = password;
 }
 
 void Server::setWelcomeMessage(std::string const &welcomeMessage)
 {
-    this->welcomeMessage = welcomeMessage;
+    this->_welcomeMessage = welcomeMessage;
 }
 
 void Server::setTimeServer(std::string const &timeServer)
 {
-    this->timeServer = timeServer;
+    this->_timeServer = timeServer;
 }
 
 void Server::setActive(bool active)
 {
-    this->active = active;
+    this->_active = active;
 }
 
 void Server::setServerFd(int serverFd)
 {
-    this->serverFd = serverFd;
+    this->_serverFd = serverFd;
 }
 
 void Server::setServerAddr(struct sockaddr_in serverAddr)
 {
-    this->serverAddr = serverAddr;
+    this->_serverAddr = serverAddr;
 }
 
 /******************************************************************************

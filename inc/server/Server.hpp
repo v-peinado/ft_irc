@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/13 16:45:11 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 17:51:56 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,25 +31,25 @@ class Server
         Server &operator=(const Server &src);
 
         // Server 
-        int port;
-        std::string serverName;
-        std::string password;
-        std::string welcomeMessage;
-        std::string timeServer;
-        bool active;
+        int _port;
+        std::string _serverName;
+        std::string _password;
+        std::string _welcomeMessage;
+        std::string _timeServer;
+        bool _active;
         
         // Server socket
-        int serverFd;
-        struct sockaddr_in serverAddr; // Server address, arpa/inet.h
+        int _serverFd;
+        struct sockaddr_in _serverAddr; // Server address, arpa/inet.h
 
         // Comandos
         
         // poll
 
         // Maps
-            std::map<int , Client *> users; // Server users
-            std::map<string::string , Channel *> channels; // Server channels
-            std::map<string::string , ACommand *> commands; // Server commands
+            std::map<int , Client *> _users; // Server users
+            std::map<string::string , Channel *> _channels; // Server channels
+            std::map<string::string , ACommand *> _commands; // Server commands
         // Server config(max users, max channels, etc)
            
     public:

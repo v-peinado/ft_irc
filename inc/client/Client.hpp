@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/13 18:01:52 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 17:50:00 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,19 @@ class Client
         Client &operator=(const Client &src);
 
         // Client
-        std::string nickname;
-        std::string username;
-        std::string realame;
-        bool registered; // si su estado cambia por un comando de registro, o por un baneao, etc
-        bool active; // Si esta conectado o no, si pasa mucho tiempo sin actividad se desconecta o se le manda un ping, o se pone en su canal de bienvenida,etc
-        int level; // Nivel de permisos, si es admin, si es operador, si es usuario normal, etc
+        std::string _nickname;
+        std::string _username;
+        std::string _realame;
+        bool _registered; // si su estado cambia por un comando de registro, o por un baneao, etc
+        bool _active; // Si esta conectado o no, si pasa mucho tiempo sin actividad se desconecta o se le manda un ping, o se pone en su canal de bienvenida,etc
+        int _level; // Nivel de permisos, si es admin, si es operador, si es usuario normal, etc
 
         // Client socket
-        int clientFd;
-        struct sockaddr_in clientAddr; // Server address, arpa/inet.h
+        int _clientFd;
+        struct sockaddr_in _clientAddr; // Server address, arpa/inet.h
         
         // Maps
-        std::map<std::string, Channel *> channels; // Client channels
+        std::map<std::string, Channel *> _channels; // Client channels
 
     public:
         // Forma canonica implementada
@@ -57,8 +57,8 @@ class Client
         int const &getLevel() const;
         std::map<std::string, Channel *> const &getChannels() const;
         Channel *getChannelByName(std::string const &name) const;
-        int getClientFd() const;
-        struct sockaddr_in getClientAddr() const;
+        int const &getClientFd() const;
+        struct sockaddr_in const &getClientAddr() const;
 
         // Setters
         void setNickname(std::string const &nickname);
@@ -78,3 +78,5 @@ class Client
         void leaveChannel(std::string const &name);
         void leaveAllChannels();        
 };
+
+#endif
