@@ -10,7 +10,7 @@ RED		= 	\033[31m
 NAME	= ircserv
 #Compiler
 CC		= c++
-CFLAGS	= -Wall -Wextra -Werror -std=c++98
+CFLAGS	=  -std=c++98 #-Wall -Wextra -Werror
 #CFLAGS	+= -g3 -fsanitize=address
 RM		= rm -f
 

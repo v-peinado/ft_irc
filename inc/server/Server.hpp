@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 17:51:56 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 18:50:40 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <arpa/inet.h>
 #include "Client.hpp"
 #include "Channel.hpp"
-#include "ACommand.hpp"
+//#include "ACommand.hpp"
 #include <exception>
 
 class Server
@@ -48,8 +48,8 @@ class Server
 
         // Maps
             std::map<int , Client *> _users; // Server users
-            std::map<string::string , Channel *> _channels; // Server channels
-            std::map<string::string , ACommand *> _commands; // Server commands
+            std::map<std::string , Channel *> _channels; // Server channels
+            std::map<std::string , ACommand *> _commands; // Server commands
         // Server config(max users, max channels, etc)
            
     public:
@@ -66,12 +66,12 @@ class Server
             bool const &getActive() const;
             int const &getServerFd() const;
             struct sockaddr_in const &getServerAddr() const;
-            AClient *getUserByFd(int fd);
+            Client *getUserByFd(int fd);
             Channel *getChannelByName(std::string const &name);
             ACommand *getCommandByName(std::string const &name);
-            std::map<int , AClient *> const &getUsers() const;
-            std::map<string::string , Channel *> const &getChannels() const;
-            std::map<string::string , ACommand *> const &getCommands() const;
+            std::map<int , Client *> const &getUsers() const;
+            std::map<std::string , Channel *> const &getChannels() const;
+            std::map<std::string , ACommand *> const &getCommands() const;
         // Setters
             void setPort(int port);
             void setServerName(std::string const &serverName);
@@ -86,7 +86,7 @@ class Server
             Channel * newChannel(std::string const &name);
 
         // Server config, insert channels, users, commands
-            void insertUser(int fd, AClient *user);
+            void insertUser(int fd, Client *user);
             void insertChannel(std::string const &name, Channel *channel);
             void insertCommand(std::string const &name, ACommand *command);
             
@@ -96,6 +96,7 @@ class Server
 
         
         // Server start, stop, connection
+            void restartServer();
             void startServer();
             void stopServer();
             void connection(); // Server connection

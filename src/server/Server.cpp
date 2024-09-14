@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 18:05:48 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 18:48:27 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ Server::~Server()
 * ---------------------------------- GETTERS ------------------------------- *
 *****************************************************************************/
 
-Server::getPort() const
+int Server::getPort() const
 {
     return this->_port;
 }
@@ -72,9 +72,9 @@ struct sockaddr_in const &Server::getServerAddr() const
     return this->_serverAddr;
 }
 
-AClient *Server::getUserByFd(int fd)
+Client *Server::getUserByFd(int fd)
 {
-    std::map<int, AClient *>::iterator it = this->_users.find(fd);    
+    std::map<int, Client *>::iterator it = this->_users.find(fd);    
     if (it != this->_users.end()) 
         return it->second;  // Devuelve el puntero al usuario si existe
     else 
@@ -99,17 +99,17 @@ ACommand *Server::getCommandByName(std::string const &name)
         return NULL;
 }
 
-std::map<int , AClient *> const &Server::getUsers() const
+std::map<int , Client *> const &Server::getUsers() const
 {
     return this->_users;
 }
 
-std::map<string::string , Channel *> const &Server::getChannels() const
+std::map<std::string , Channel *> const &Server::getChannels() const
 {
     return this->_channels;
 }
 
-std::map<string::string , ACommand *> const &Server::getCommands() const
+std::map<std::string , ACommand *> const &Server::getCommands() const
 {
     return this->_commands;
 }
@@ -192,7 +192,7 @@ void Server::connection()
     // Conexion de un cliente
 }
 
-void Server::insertUser(int fd, AClient *user)
+void Server::insertUser(int fd, Client *user)
 {
     // Inserta un usuario
 }
