@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 18:07:07 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/14 18:26:13 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,72 @@ struct Client::sockaddr_in const &Client::getClientAddr() const
     return this->_clientAddr;
 }
 
+/*****************************************************************************
+* ---------------------------------- SETTERS ------------------------------- *
+*****************************************************************************/
 
+void Client::setNickname(std::string const &nickname)
+{
+    this->_nickname = nickname;
+}
 
+void Client::setUsername(std::string const &username)
+{
+    this->_username = username;
+}
 
+void Client::setRealname(std::string const &realname)
+{
+    this->_realname = realname;
+}
 
+void Client::setRegistered(bool registered)
+{
+    this->_registered = registered;
+}
+
+void Client::setActive(bool active)
+{
+    this->_active = active;
+}
+
+void Client::setLevel(int level)
+{
+    this->_level = level;
+}
+
+void Client::setClientFd(int clientFd)
+{
+    this->_clientFd = clientFd;
+}
+
+void Client::setClientAddr(struct sockaddr_in clientAddr)
+{
+    this->_clientAddr = clientAddr;
+}
+
+/*****************************************************************************
+* ---------------------------------- CHANNELS ------------------------------ *
+*****************************************************************************/
+
+void Client::insertChannel(std::string const &name, Channel *channel)
+{
+    this->_channels.insert(std::pair<std::string, Channel *>(name, channel));
+}
+
+void Client::eraseChannel(std::string const &name)
+{
+    this->_channels.erase(name);
+}
+
+void Client::leaveChannel(std::string const &name)
+{
+    //De momento es lo mismo que eraseChannel, pero en un futuro se podria hacer algo mas
+    this->_channels.erase(name);
+}
+
+void Client::leaveAllChannels()
+{
+    //Liberar memoria de los canales, si se implementa,, modificacion en futuro segun necesidad
+    this->_channels.clear();
+}
