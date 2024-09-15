@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/15 13:13:44 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/15 15:47:40 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,8 @@ void Server::setWelcomeMessage(std::string const &welcomeMessage)
 
 void Server::setTimeServer(std::string const &timeServer)
 {
+    // Cambiaremos seguramente, por una funcion que no recibe un string, 
+    // sino que setea a la hora actual del sistema
     this->_timeServer = timeServer;
 }
 
@@ -185,7 +187,7 @@ void Server::startServer(char *port, char *password)
     this->_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Cualquier direccion puede conectarse
     this->_serverAddr.sin_port = htons(this->getPort()); // Puerto
     
-    //Configurar el socket para que pueda reutilizarse, y fnctl para que no bloquee el puerto
+    //Configurar el socket para que pueda reutilizarse setsockopt, y fnctl para que no bloquee el puerto
     
     // Bind del socket(vincular)
     if(bind(this->getServerFd(), (struct sockaddr *)&this->getServerAddr(), sizeof(this->getServerAddr())) < 0)
@@ -204,7 +206,9 @@ void Server::startServer(char *port, char *password)
         exit(1);
     }
     std::cout << "Server started on port " << this->getPort() << std::endl;
-    // Poll
+    // Poll, añadir el socket del server a la lista de pollfds, tambien clientes, canales, etc
+    // Despues de tener el vector de pollfds, se llama a runServer()
+    // runServer() es el bucle principal del servidor, que constamente esta monitoreando los eventos de los sockets
     pollfd pfd;
     pfd.fd = this->getServerFd();
     pfd.events = POLLIN;
@@ -218,6 +222,7 @@ void Server::runServer()
         Poll, para monitorear los eventos de los sockets, con la lista de pollfds, que esta monitoreando
         Si hay un evento en el socket del servidor, como si alguien se conecta, se envia mensajes, etc
     */
+   
 }
 void Server::stopServer()
 {

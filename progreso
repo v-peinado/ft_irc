@@ -1,7 +1,0 @@
--comentados getters , setters, funciones miembro que involucren clases cliente y canal todavia no implementadas
-    igual con los maps
-
--Falta configurar el socket para que pueda reutilizarse, y fnctl para que no bloquee el puerto
-        funcion initServer() en server.cpp
--Intentando hacer loop del servidor, para controlar eventos en la lista de sockets de _pollfd
-        funcion runServer() en server.cpp
