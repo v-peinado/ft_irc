@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:10:55 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 23:12:35 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/15 13:24:04 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     std::cout << "Server started on port " << server.getPort() << std::endl;
     std::cout << "Password: " << server.getPassword() << std::endl;
     std::cout << "ADress: " << server.getServerAddr().sin_addr.s_addr << std::endl;
-    std::cout << "Port: " << server.getServerAddr().sin_port << std::endl;
+    std::cout << "Port: " << ntohs(server.getServerAddr().sin_port) << std::endl;
     std::cout << "Server fd: " << server.getServerFd() << std::endl;
     return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 23:03:17 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/15 13:15:43 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,20 @@
 #include <string>
 #include <map>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Client.hpp"
 #include "Channel.hpp"
 //#include "ACommand.hpp"
 #include <exception>
+#include <vector>
+#include <poll.h>
+#include <cstring>
+#include <unistd.h>
+
+
+#define MAX_CLIENTS 10
 
 class Server
 {
@@ -44,7 +53,8 @@ class Server
 
         // Comandos
         
-        // poll
+        // poll, lista de fd que poll va a monitorear
+        std::vector<struct pollfd> _pollfds;
 
         // Maps
             std::map<int , Client *> _users; // Server users
@@ -81,8 +91,7 @@ class Server
             void setActive(bool active);
             void setServerFd(int serverFd);
             void setServerAddr(struct sockaddr_in serverAddr);
-        // Server config, init, end, restart...
-            void startServer(char *port, char *password);
+            
         // Server config, new channels, users, commands
             //  Channel * newChannel(std::string const &name);
 
@@ -97,9 +106,10 @@ class Server
 
         
         // Server start, stop, connection
-            void restartServer();
-            void startServer();
+            void startServer(char *port, char *password);
+            void runServer();
             void stopServer();
+            void restartServer();
             void connection(); // Server connection
         // Server send, receive
         

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 23:09:00 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/15 13:13:44 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,26 +166,58 @@ void Server::setServerAddr(struct sockaddr_in serverAddr)
 
 void Server::startServer(char *port, char *password)
 {
-    this->setPort(atoi(port)); //no se puede atoi en c++98
+    this->setPort(atoi(port)); //quiza deberiamos cambiar atoi por otro metodo
     this->setPassword(password);
     this->setActive(true);
+    
     // Creacion del socket
     this->setServerFd(socket(AF_INET, SOCK_STREAM, 0));
-    if (this->getServerFd() == -1)
+    if (this->getServerFd() < 0)
     {
+        // quiza conviene crear excepciones para los errores, y decidir si se cierra el programa o no
         std::cerr << "Error: socket" << std::endl;
         exit(1);
     }
+    
+    // Configuracion del serverAddr
+    std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));
     this->_serverAddr.sin_family = AF_INET; // ipv4
-    this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
+    this->_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Cualquier direccion puede conectarse
     this->_serverAddr.sin_port = htons(this->getPort()); // Puerto
     
-    // Configuracion del socket
-    // Bind del socket
+    //Configurar el socket para que pueda reutilizarse, y fnctl para que no bloquee el puerto
+    
+    // Bind del socket(vincular)
+    if(bind(this->getServerFd(), (struct sockaddr *)&this->getServerAddr(), sizeof(this->getServerAddr())) < 0)
+    {
+        // cambiar por excepciones
+        std::cerr << "Error: bind" << std::endl;
+        close(this->getServerFd());
+        exit(1);
+    }
+    
     // Listen del socket
-    // Accept del socket
+    if(listen(this->getServerFd(), MAX_CLIENTS) < 0)
+    {
+        std::cerr << "Error: listen" << std::endl;
+        close(this->getServerFd());
+        exit(1);
+    }
+    std::cout << "Server started on port " << this->getPort() << std::endl;
     // Poll
-    // Cierre del socket
+    pollfd pfd;
+    pfd.fd = this->getServerFd();
+    pfd.events = POLLIN;
+    this->_pollfds.push_back(pfd);
+}
+
+void Server::runServer()
+{
+    /*
+        Bucle principal del servidor, bucle infinito(mientras el servidor este activo)
+        Poll, para monitorear los eventos de los sockets, con la lista de pollfds, que esta monitoreando
+        Si hay un evento en el socket del servidor, como si alguien se conecta, se envia mensajes, etc
+    */
 }
 void Server::stopServer()
 {
