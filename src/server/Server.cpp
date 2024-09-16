@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:59:49 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:48:34 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <iostream>
 #include <cstdlib>
 #include "Client.hpp"
+#include <cstdio>
+#include <cerrno>
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -211,10 +213,13 @@ void Server::newClientConnection()
     int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient.getClientAddr(), &addrLen);
     if (newClientFd < 0)
     {
-        // cambiar por excepciones
-        std::cerr << "Error: accept" << std::endl;
-        close(this->_serverFd);
-        exit(1);
+        // if (errno == EWOULDBLOCK || errno == EAGAIN)
+        //     return;
+        perror("Error: accept");
+    }
+    if (fcntl(newClientFd, F_SETFL, O_NONBLOCK) < 0)
+    {
+        perror("Error: fcntl");
     }
     newClient.getClientPollFd().fd = newClientFd;
     newClient.getClientPollFd().events = POLLIN;
@@ -223,6 +228,7 @@ void Server::newClientConnection()
     newClient.setClientIp(inet_ntoa(newClient.getClientAddr().sin_addr));
     // Insertar el nuevo cliente en la lista de usuarios
     this->setPollfds(newClient.getClientPollFd());
+    this->_users.insert(std::pair<int, Client *>(newClientFd, &newClient));
     std::cout << "New client connected: " << newClient.getClientIp() << std::endl;
 }
 
