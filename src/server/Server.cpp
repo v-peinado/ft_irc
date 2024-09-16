@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/15 15:47:40 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 12:11:35 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,12 @@ void Server::setServerAddr(struct sockaddr_in serverAddr)
     this->_serverAddr = serverAddr;
 }
 
+void Server::setPollfds(pollfd pollfd)
+{
+    this->_pollfds.push_back(pollfd);
+}
+
+
 /******************************************************************************
 * ------------------------------- SERVER  ----------------------------------- *
 ******************************************************************************/
@@ -184,9 +190,10 @@ void Server::startServer(char *port, char *password)
     // Configuracion del serverAddr
     std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));
     this->_serverAddr.sin_family = AF_INET; // ipv4
-    this->_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Cualquier direccion puede conectarse
+    this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
     this->_serverAddr.sin_port = htons(this->getPort()); // Puerto
     
+    //!!!!!!IMPORTANTE!!!!!!
     //Configurar el socket para que pueda reutilizarse setsockopt, y fnctl para que no bloquee el puerto
     
     // Bind del socket(vincular)
@@ -205,14 +212,14 @@ void Server::startServer(char *port, char *password)
         close(this->getServerFd());
         exit(1);
     }
-    std::cout << "Server started on port " << this->getPort() << std::endl;
     // Poll, añadir el socket del server a la lista de pollfds, tambien clientes, canales, etc
     // Despues de tener el vector de pollfds, se llama a runServer()
     // runServer() es el bucle principal del servidor, que constamente esta monitoreando los eventos de los sockets
-    pollfd pfd;
-    pfd.fd = this->getServerFd();
-    pfd.events = POLLIN;
-    this->_pollfds.push_back(pfd);
+    pollfd serverPollFd;
+    serverPollFd.fd = this->getServerFd();
+    serverPollFd.events = POLLIN;
+    serverPollFd.revents = 0;
+    this->setPollfds(serverPollFd);
 }
 
 void Server::runServer()
@@ -222,8 +229,39 @@ void Server::runServer()
         Poll, para monitorear los eventos de los sockets, con la lista de pollfds, que esta monitoreando
         Si hay un evento en el socket del servidor, como si alguien se conecta, se envia mensajes, etc
     */
-   
+   while(this->_active)
+   {
+        if (poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0)
+        {
+            // cambiar por excepciones
+            std::cerr << "Error: poll" << std::endl;
+            close(this->getServerFd());
+            exit(1);
+        }
+        for (std::vector<pollfd>::iterator it = _pollfds.begin(); it != _pollfds.end(); ++it)
+        {
+            if (it->revents & POLLIN) // Accedemos a los miembros con '->' porque 'it' es un puntero
+            {
+                if (it->fd == this->_serverFd)
+                    this->newClientConnection();
+                else
+                    this->reciveNewData(it->fd);
+            }
+        }
+   }
+   // Cerrar el servidor, clientes, canales, etc
+   // stopServer();
 }
+void Server::newClientConnection()
+{
+    // aceptar la conexion del cliente
+}
+
+void Server::reciveNewData(int fd)
+{
+    // Recibir datos del cliente
+}
+
 void Server::stopServer()
 {
     // Parada del server
@@ -242,11 +280,6 @@ void Server::sendToClient(int fd, std::string const &message)
 void Server::receiveFromClient(int fd, std::string const &message)
 {
     // Recibe un mensaje de un cliente
-}
-
-void Server::connection()
-{
-    // Conexion de un cliente
 }
 
 void Server::insertUser(int fd, Client *user)
