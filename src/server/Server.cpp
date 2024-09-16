@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/17 00:26:25 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/17 00:41:43 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,32 +219,39 @@ void Server::runServer()
 }
 void Server::newClientConnection()
 {
-    Client newClient;
-    memset(&newClient.getClientAddr(), 0, sizeof(newClient.getClientAddr()));
-    socklen_t addrLen = sizeof(newClient.getClientAddr());
-    int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient.getClientAddr(), &addrLen);
+    // Crear un nuevo cliente dinámicamente en el heap
+    Client *newClient = new Client();
+    memset(&newClient->getClientAddr(), 0, sizeof(newClient->getClientAddr()));
+    socklen_t addrLen = sizeof(newClient->getClientAddr());
+
+    // Aceptar la conexión
+    int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient->getClientAddr(), &addrLen);
     if (newClientFd < 0)
     {
-        // if (errno == EWOULDBLOCK || errno == EAGAIN)
-        //     return;
         perror("Error: accept");
+        delete newClient; // Asegurarse de liberar la memoria en caso de error
+        return;
     }
-    if (fcntl(newClientFd, F_SETFL, O_NONBLOCK) < 0)
-    {
-        perror("Error: fcntl");
-    }
-    newClient.getClientPollFd().fd = newClientFd;
-    newClient.getClientPollFd().events = POLLIN;
-    newClient.getClientPollFd().revents = 0;
-    newClient.setClientFd(newClientFd);
-    newClient.setClientIp(inet_ntoa(newClient.getClientAddr().sin_addr));
-    newClient.setRegistered(false); // Aun no esta registrado, no puede enviar comandos
-    // Insertar el nuevo cliente en la lista de usuarios
-    this->setPollfds(newClient.getClientPollFd());
-    //quiza habria que pedirle ingresar un nombre de usuario, etc y luego insertarlo en el map
-    this->_users.insert(std::pair<int, Client *>(newClientFd, &newClient));
-    std::cout << "New client connected: " << newClient.getClientIp() << std::endl;
-    send(newClientFd, this->_welcomeMessage.c_str(), strlen(this->_welcomeMessage.c_str()), 0);
+
+    // Configurar el nuevo cliente
+    newClient->getClientPollFd().fd = newClientFd;
+    newClient->getClientPollFd().events = POLLIN;
+    newClient->getClientPollFd().revents = 0;
+    newClient->setClientFd(newClientFd);
+    newClient->setClientIp(inet_ntoa(newClient->getClientAddr().sin_addr));
+    newClient->setRegistered(false);
+
+    // Añadir el nuevo cliente al vector de pollfds
+    this->setPollfds(newClient->getClientPollFd());
+
+    // Insertar el nuevo cliente en el mapa _users
+    this->_users.insert(std::make_pair(newClientFd, newClient));
+
+    // Mensaje de conexión del cliente
+    std::cout << "New client connected: " << newClient->getClientIp() << std::endl;
+
+    // Enviar el mensaje de bienvenida al cliente
+    send(newClientFd, this->_welcomeMessage.c_str(), this->_welcomeMessage.size(), 0);
 }
 
 void Server::reciveNewData(int fd)
