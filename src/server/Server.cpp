@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:15:47 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:59:49 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,54 +35,20 @@ Server::~Server()
 * ---------------------------------- GETTERS ------------------------------- *
 *****************************************************************************/
 
-int Server::getPort() const
-{
-    return this->_port;
-}
-
 std::string const &Server::getServerName() const
 {
     return this->_serverName;
 }
 
-std::string const &Server::getPassword() const
-{
-    return this->_password;
-}
 
-std::string const &Server::getWelcomeMessage() const
-{
-    return this->_welcomeMessage;
-}
-
-std::string const &Server::getTimeServer() const
-{
-    return this->_timeServer;
-}
-
-bool const &Server::getActive() const
-{
-    return this->_active;
-}
-
-int const &Server::getServerFd() const
-{
-    return this->_serverFd;
-}
-
-struct sockaddr_in const &Server::getServerAddr() const
-{
-    return this->_serverAddr;
-}
-
-Client *Server::getUserByFd(int fd)
-{
-    std::map<int, Client *>::iterator it = this->_users.find(fd);    
-    if (it != this->_users.end()) 
-        return it->second;  // Devuelve el puntero al usuario si existe
-    else 
-        return NULL;  // Devuelve null si no se encuentra
-}
+// Client *Server::getUserByFd(int fd)
+// {
+//     std::map<int, Client *>::iterator it = this->_users.find(fd);    
+//     if (it != this->_users.end()) 
+//         return it->second;  // Devuelve el puntero al usuario si existe
+//     else 
+//         return NULL;  // Devuelve null si no se encuentra
+// }
 
 // Channel *Server::getChannelByName(std::string const &name)
 // {
@@ -121,48 +87,6 @@ std::map<int , Client *> const &Server::getUsers() const
 * ------------------------------- SETTERS ----------------------------------- *
 **************************************************************************** */
 
-void Server::setPort(int port)
-{
-    this->_port = port;
-}
-
-void Server::setServerName(std::string const &serverName)
-{
-    this->_serverName = serverName;
-}
-
-void Server::setPassword(std::string const &password)
-{
-    this->_password = password;
-}
-
-void Server::setWelcomeMessage(std::string const &welcomeMessage)
-{
-    this->_welcomeMessage = welcomeMessage;
-}
-
-void Server::setTimeServer(std::string const &timeServer)
-{
-    // Cambiaremos seguramente, por una funcion que no recibe un string, 
-    // sino que setea a la hora actual del sistema
-    this->_timeServer = timeServer;
-}
-
-void Server::setActive(bool active)
-{
-    this->_active = active;
-}
-
-void Server::setServerFd(int serverFd)
-{
-    this->_serverFd = serverFd;
-}
-
-void Server::setServerAddr(struct sockaddr_in serverAddr)
-{
-    this->_serverAddr = serverAddr;
-}
-
 void Server::setPollfds(pollfd pollfd)
 {
     this->_pollfds.push_back(pollfd);
@@ -172,16 +96,28 @@ void Server::setPollfds(pollfd pollfd)
 /******************************************************************************
 * ------------------------------- SERVER  ----------------------------------- *
 ******************************************************************************/
-
+void Server::printServerInfo()
+{
+    // Imprime la informacion del servidor
+    std::cout << "Server name: " << this->_serverName << std::endl;
+    std::cout << "Server password: " << this->_password << std::endl;
+    std::cout << "Server port: " << this->_port << std::endl;
+    // Va a imprimir 0.0.0.0, porque acepta cualquier direccion
+    std::cout << "IP: " << inet_ntoa(this->_serverAddr.sin_addr) << std::endl;
+    std::cout << "Server fd: " << this->_serverFd << std::endl;
+    std::cout << "Server active: " << this->_active << std::endl;
+    // std::cout << "Server users: " << this->_users.size() << std::endl;
+}
 void Server::startServer(char *port, char *password)
 {
-    this->setPort(atoi(port)); //quiza deberiamos cambiar atoi por otro metodo
-    this->setPassword(password);
-    this->setActive(true);
+    this->_serverName = "IRCserv: ffons-ti & vpeinado";
+    this->_port = atoi(port);
+    this->_password = password;
+    this->_active = true;
     
     // Creacion del socket
-    this->setServerFd(socket(AF_INET, SOCK_STREAM, 0));
-    if (this->getServerFd() < 0)
+    this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (this->_serverFd < 0)
     {
         // quiza conviene crear excepciones para los errores, y decidir si se cierra el programa o no
         std::cerr << "Error: socket" << std::endl;
@@ -192,46 +128,46 @@ void Server::startServer(char *port, char *password)
     std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));
     this->_serverAddr.sin_family = AF_INET; // ipv4
     this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
-    this->_serverAddr.sin_port = htons(this->getPort()); // Puerto
+    this->_serverAddr.sin_port = htons(this->_port); // Puerto
     
     //!!!!!!IMPORTANTE!!!!!! (para que no de error de bind)
     //Configurar el socket para que pueda reutilizarse setsockopt, y fnctl para que no bloquee el puerto
     int opt = 1;
-    if(setsockopt(this->getServerFd(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    if(setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
     {
         // cambiar por excepciones
         std::cerr << "Error: setsockopt" << std::endl;
-        close(this->getServerFd());
+        close(this->_serverFd);
         exit(1);
     }
-    if(fcntl(this->getServerFd(), F_SETFL, O_NONBLOCK) < 0)
+    if(fcntl(this->_serverFd, F_SETFL, O_NONBLOCK) < 0)
     {
         // cambiar por excepciones
         std::cerr << "Error: fcntl" << std::endl;
-        close(this->getServerFd());
+        close(this->_serverFd);
         exit(1);
     }
-    // Bind del socket(vincular)
-    if(bind(this->getServerFd(), (struct sockaddr *)&this->getServerAddr(), sizeof(this->getServerAddr())) < 0)
+    // Bind del socket(vincular), hay que gestionar las signals, paraque al cerrar el servidor, se libere el puerto, si no dara fallo
+    if(bind(this->_serverFd, (struct sockaddr *)&this->_serverAddr, sizeof(this->_serverAddr)) < 0)
     {
         // cambiar por excepciones
         std::cerr << "Error: bind" << std::endl;
-        close(this->getServerFd());
+        close(this->_serverFd);
         exit(1);
     }
     
-    // Listen del socket
-    if(listen(this->getServerFd(), MAX_CLIENTS) < 0)
+    // Listen del socket, se usa para que el servidor pueda aceptar conexiones
+    if(listen(this->_serverFd, MAX_CLIENTS) < 0)
     {
         std::cerr << "Error: listen" << std::endl;
-        close(this->getServerFd());
+        close(this->_serverFd);
         exit(1);
     }
     // Poll, añadir el socket del server a la lista de pollfds, tambien clientes, canales, etc
     // Despues de tener el vector de pollfds, se llama a runServer()
     // runServer() es el bucle principal del servidor, que constamente esta monitoreando los eventos de los sockets
     pollfd serverPollFd;
-    serverPollFd.fd = this->getServerFd();
+    serverPollFd.fd = this->_serverFd;
     serverPollFd.events = POLLIN;
     serverPollFd.revents = 0;
     this->setPollfds(serverPollFd);
@@ -250,7 +186,7 @@ void Server::runServer()
         {
             // cambiar por excepciones
             std::cerr << "Error: poll" << std::endl;
-            close(this->getServerFd());
+            close(this->_serverFd);
             exit(1);
         }
         for (std::vector<pollfd>::iterator it = _pollfds.begin(); it != _pollfds.end(); ++it)
@@ -272,12 +208,12 @@ void Server::newClientConnection()
     Client newClient;
     memset(&newClient.getClientAddr(), 0, sizeof(newClient.getClientAddr()));
     socklen_t addrLen = sizeof(newClient.getClientAddr());
-    int newClientFd = accept(this->getServerFd(), (struct sockaddr *)&newClient.getClientAddr(), &addrLen);
+    int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient.getClientAddr(), &addrLen);
     if (newClientFd < 0)
     {
         // cambiar por excepciones
         std::cerr << "Error: accept" << std::endl;
-        close(this->getServerFd());
+        close(this->_serverFd);
         exit(1);
     }
     newClient.getClientPollFd().fd = newClientFd;
@@ -292,7 +228,7 @@ void Server::newClientConnection()
 
 void Server::reciveNewData(int fd)
 {
-    // Recibir datos del cliente
+    
 }
 
 void Server::stopServer()
@@ -300,25 +236,6 @@ void Server::stopServer()
     // Parada del server
 }
 
-void Server::restartServer()
-{
-    // Reinicio del server
-}
-
-void Server::sendToClient(int fd, std::string const &message)
-{
-    // Envia un mensaje a un cliente
-}
-
-void Server::receiveFromClient(int fd, std::string const &message)
-{
-    // Recibe un mensaje de un cliente
-}
-
-void Server::insertUser(int fd, Client *user)
-{
-    // Inserta un usuario
-}
 
 // void Server::insertChannel(std::string const &name, Channel *channel)
 // {

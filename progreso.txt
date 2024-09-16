@@ -8,4 +8,4 @@ pendientes:
         funcion runServer() en server.cpp 
 -Organizar los headers y includes en un solo archivo, headers.h(opcional)
 -Parece que runServer funciona y newClientConnection tambien
--
+-Borrados varios metodos innecesarios del codigo :)

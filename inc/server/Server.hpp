@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:16:37 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:59:54 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ class Server
         int _port;
         std::string _serverName;
         std::string _password;
-        std::string _welcomeMessage;
-        std::string _timeServer;
         bool _active;
         
         // Server socket
@@ -69,36 +67,21 @@ class Server
         ~Server();
 
         // Getters, el poner referencias constantes o no, es para que no se pueda modificar el valor, dependera del desarrollo posterior
-            int getPort() const;
             std::string const &getServerName() const;
-            std::string const &getPassword() const;
-            std::string const &getWelcomeMessage() const;
-            std::string const &getTimeServer() const;
-            bool const &getActive() const;
-            int const &getServerFd() const;
-            struct sockaddr_in const &getServerAddr() const;
-            Client *getUserByFd(int fd);
             // Channel *getChannelByName(std::string const &name);
             // ACommand *getCommandByName(std::string const &name);
             std::map<int , Client *> const &getUsers() const;
             //  std::map<std::string , Channel *> const &getChannels() const;
             //  std::map<std::string , ACommand *> const &getCommands() const;
         // Setters
-            void setPort(int port);
-            void setServerName(std::string const &serverName);
-            void setPassword(std::string const &password);
-            void setWelcomeMessage(std::string const &welcomeMessage);
-            void setTimeServer(std::string const &timeServer);
-            void setActive(bool active);
-            void setServerFd(int serverFd);
-            void setServerAddr(struct sockaddr_in serverAddr);
+
             void setPollfds(pollfd pollfd);
             
         // Server config, new channels, users, commands
             //  Channel * newChannel(std::string const &name);
 
         // Server config, insert channels, users, commands
-            void insertUser(int fd, Client *user);
+            //void insertUser(int fd, Client *user);
             //  void insertChannel(std::string const &name, Channel *channel);
             //  void insertCommand(std::string const &name, ACommand *command);
             
@@ -106,19 +89,13 @@ class Server
             void deleteUser(int fd);
             void deleteChannel(std::string const &name);
 
-        
         // Server start, stop, connection
             void startServer(char *port, char *password);
+            void printServerInfo();
             void runServer();
             void stopServer();
-            void restartServer();
             void newClientConnection(); // Server connection
-            void reciveNewData(int fd); // Server receive data
-        // Server send, receive
-        
-            void sendToClient(int fd, std::string const &message);
-            void receiveFromClient(int fd, std::string const &message);
-            
+            void reciveNewData(int fd); // Server receive data           
         // Server poll                       
 };
     
