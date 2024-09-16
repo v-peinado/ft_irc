@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 19:48:34 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/17 00:26:25 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,17 @@ void Server::setPollfds(pollfd pollfd)
     this->_pollfds.push_back(pollfd);
 }
 
+void Server::setWelcomeMessage()
+{
+    this->_welcomeMessage = 
+        "*************************************************\n"
+        "*          Welcome to the IRC Server!           *\n"
+        "*   1. Use PASS <password> to log in            *\n"
+        "*   2. Use USER <username> 0 * :<realname>      *\n"
+        "*   3. Use NICK <nickname> to set your nickname *\n"
+        "*************************************************\n";
+}
+
 
 /******************************************************************************
 * ------------------------------- SERVER  ----------------------------------- *
@@ -116,6 +127,7 @@ void Server::startServer(char *port, char *password)
     this->_port = atoi(port);
     this->_password = password;
     this->_active = true;
+    this->setWelcomeMessage();
     
     // Creacion del socket
     this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -226,15 +238,36 @@ void Server::newClientConnection()
     newClient.getClientPollFd().revents = 0;
     newClient.setClientFd(newClientFd);
     newClient.setClientIp(inet_ntoa(newClient.getClientAddr().sin_addr));
+    newClient.setRegistered(false); // Aun no esta registrado, no puede enviar comandos
     // Insertar el nuevo cliente en la lista de usuarios
     this->setPollfds(newClient.getClientPollFd());
+    //quiza habria que pedirle ingresar un nombre de usuario, etc y luego insertarlo en el map
     this->_users.insert(std::pair<int, Client *>(newClientFd, &newClient));
     std::cout << "New client connected: " << newClient.getClientIp() << std::endl;
+    send(newClientFd, this->_welcomeMessage.c_str(), strlen(this->_welcomeMessage.c_str()), 0);
 }
 
 void Server::reciveNewData(int fd)
 {
-    
+    char buffer[1024];
+    memset(buffer, 0, 1024);
+    int bytes = recv(fd, buffer, 1024, 0);
+    if (bytes < 0)
+    {
+        
+        perror("Error: recv");
+    }
+    else if (bytes == 0)
+    {
+        // Cliente desconectado
+        std::cout << "Client disconnected" << std::endl;
+        this->deleteUser(fd);
+    }
+    else
+    {
+        std::string data(buffer);
+        std::cout << "Data received: " << buffer << std::endl;
+    }    
 }
 
 void Server::stopServer()

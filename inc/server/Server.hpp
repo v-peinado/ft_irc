@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:59:54 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/17 00:20:35 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Server
         int _port;
         std::string _serverName;
         std::string _password;
+        std::string _welcomeMessage;
         bool _active;
         
         // Server socket
@@ -76,6 +77,7 @@ class Server
         // Setters
 
             void setPollfds(pollfd pollfd);
+            void setWelcomeMessage();
             
         // Server config, new channels, users, commands
             //  Channel * newChannel(std::string const &name);
