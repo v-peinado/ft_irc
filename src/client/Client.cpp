@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 22:49:49 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:09:07 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,11 @@
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
 ******************************************************************************/
-
+Client::Client()
+{
+    // Constructor
+    // Inicializacion de variables, mejor por lista de inicializacion
+}
 Client::Client(struct sockaddr_in client, int fd)
 {
     // Inicializar variables
@@ -81,10 +85,22 @@ int const &Client::getClientFd() const
     return this->_clientFd;
 }
 
-struct sockaddr_in const &Client::getClientAddr() const
+struct sockaddr_in &Client::getClientAddr()
 {
     return this->_clientAddr;
 }
+
+struct pollfd &Client::getClientPollFd()
+{
+    return this->_clientPollFd;
+}
+
+std::string const &Client::getClientIp() const
+{
+    return this->_clientIp;
+}
+
+
 
 /*****************************************************************************
 * ---------------------------------- SETTERS ------------------------------- *
@@ -128,6 +144,11 @@ void Client::setClientFd(int clientFd)
 void Client::setClientAddr(struct sockaddr_in clientAddr)
 {
     this->_clientAddr = clientAddr;
+}
+
+void Client::setClientIp(std::string clientIp)
+{
+    this->_clientIp = clientIp;
 }
 
 /*****************************************************************************

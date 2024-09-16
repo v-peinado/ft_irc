@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 12:10:28 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:16:37 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <poll.h>
 #include <cstring>
 #include <unistd.h>
+#include <fcntl.h>
 
 
 #define MAX_CLIENTS 10

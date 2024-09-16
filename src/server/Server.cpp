@@ -6,13 +6,14 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 12:11:35 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:15:47 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <iostream>
 #include <cstdlib>
+#include "Client.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -193,9 +194,23 @@ void Server::startServer(char *port, char *password)
     this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
     this->_serverAddr.sin_port = htons(this->getPort()); // Puerto
     
-    //!!!!!!IMPORTANTE!!!!!!
+    //!!!!!!IMPORTANTE!!!!!! (para que no de error de bind)
     //Configurar el socket para que pueda reutilizarse setsockopt, y fnctl para que no bloquee el puerto
-    
+    int opt = 1;
+    if(setsockopt(this->getServerFd(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        // cambiar por excepciones
+        std::cerr << "Error: setsockopt" << std::endl;
+        close(this->getServerFd());
+        exit(1);
+    }
+    if(fcntl(this->getServerFd(), F_SETFL, O_NONBLOCK) < 0)
+    {
+        // cambiar por excepciones
+        std::cerr << "Error: fcntl" << std::endl;
+        close(this->getServerFd());
+        exit(1);
+    }
     // Bind del socket(vincular)
     if(bind(this->getServerFd(), (struct sockaddr *)&this->getServerAddr(), sizeof(this->getServerAddr())) < 0)
     {
@@ -254,7 +269,25 @@ void Server::runServer()
 }
 void Server::newClientConnection()
 {
-    // aceptar la conexion del cliente
+    Client newClient;
+    memset(&newClient.getClientAddr(), 0, sizeof(newClient.getClientAddr()));
+    socklen_t addrLen = sizeof(newClient.getClientAddr());
+    int newClientFd = accept(this->getServerFd(), (struct sockaddr *)&newClient.getClientAddr(), &addrLen);
+    if (newClientFd < 0)
+    {
+        // cambiar por excepciones
+        std::cerr << "Error: accept" << std::endl;
+        close(this->getServerFd());
+        exit(1);
+    }
+    newClient.getClientPollFd().fd = newClientFd;
+    newClient.getClientPollFd().events = POLLIN;
+    newClient.getClientPollFd().revents = 0;
+    newClient.setClientFd(newClientFd);
+    newClient.setClientIp(inet_ntoa(newClient.getClientAddr().sin_addr));
+    // Insertar el nuevo cliente en la lista de usuarios
+    this->setPollfds(newClient.getClientPollFd());
+    std::cout << "New client connected: " << newClient.getClientIp() << std::endl;
 }
 
 void Server::reciveNewData(int fd)

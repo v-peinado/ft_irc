@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/15 15:13:26 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:08:37 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,14 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <poll.h>
 #include <exception>
 
 class Client
 {
     private:
         //Forma canonica no implementada
-        Client();
+        
         Client(const Client &src);
         Client &operator=(const Client &src);
 
@@ -39,13 +40,16 @@ class Client
 
         // Client socket
         int _clientFd;
+        std::string _clientIp;
         struct sockaddr_in _clientAddr; // Server address, arpa/inet.h
+        struct pollfd _clientPollFd;
         
         // Maps
         //  std::map<std::string, Channel *> _channels; // Client channels
 
     public:
         // Forma canonica implementada
+        Client();
         Client(struct sockaddr_in client, int fd);
         ~Client();
 
@@ -59,8 +63,10 @@ class Client
         //  std::map<std::string, Channel *> const &getChannels() const;
         //  Channel *getChannelByName(std::string const &name) const;
         int const &getClientFd() const;
-        struct sockaddr_in const &getClientAddr() const;
-
+        struct sockaddr_in &getClientAddr();
+        std::string const &getClientIp() const;
+        struct pollfd &getClientPollFd();
+        
         // Setters
         void setNickname(std::string const &nickname);
         void setUsername(std::string const &username);
@@ -70,6 +76,7 @@ class Client
         void setLevel(int level);
         void setClientFd(int clientFd);
         void setClientAddr(struct sockaddr_in clientAddr);
+        void setClientIp(std::string clientIp);
 
         // Client socket
 
