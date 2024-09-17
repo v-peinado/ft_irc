@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/17 16:22:53 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/17 20:57:37 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,13 @@ void Server::runServer()
             close(this->_serverFd);
             exit(1);
         }
+        /*
+            Cuando utilizas un iterador, si el vector se modifica (por ejemplo, añadiendo o eliminando elementos),
+            el iterador puede volverse inválido(al redimensionar quiza se guarde enotra direccion de memoria) lo que podría causar un comportamiento indefinido o 
+            errores como el que estás viendo.
+            Un indice en cambio, no se ve afectado por la modificación del vector, ya que siempre apunta al mismo elemento, por ejemplo, si se añade un elemento al vector,
+            el indice 3 siempre sera el indice 3, aunque el vector se redimensione y cambie de direccion de memoria
+        */
 		for (size_t i = 0; i < this->_pollfds.size(); i++)
 		{
 			if (this->_pollfds[i].revents & POLLIN)

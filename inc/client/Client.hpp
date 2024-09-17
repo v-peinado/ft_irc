@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:08:37 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/17 21:29:02 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Client
         std::string _nickname;
         std::string _username;
         std::string _realname;
+        std::string buffer; // Ayuda a recibir los datos, que pueden llegar en partes ya que TCP no garantiza que lleguen completos en un solo paquete, se necesita un buffer para ir acumulando los datos
         bool _registered; // si su estado cambia por un comando de registro, o por un baneao, etc
         bool _active; // Si esta conectado o no, si pasa mucho tiempo sin actividad se desconecta o se le manda un ping, o se pone en su canal de bienvenida,etc
         int _level; // Nivel de permisos, si es admin, si es operador, si es usuario normal, etc
