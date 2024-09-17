@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/17 00:41:43 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:22:53 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,18 @@ std::map<int , Client *> const &Server::getUsers() const
 
 void Server::setPollfds(pollfd pollfd)
 {
+    if (this->_pollfds.size() >= MAX_CLIENTS)
+    {
+        // cambiar por excepciones
+        std::cerr << "Error: max clients reached" << std::endl;
+        return;
+    }
+    if (pollfd.fd < 2)
+    {
+        // cambiar por excepciones
+        std::cerr << "Error: invalid fd" << std::endl;
+        return;
+    }
     this->_pollfds.push_back(pollfd);
 }
 
@@ -119,6 +131,7 @@ void Server::printServerInfo()
     std::cout << "IP: " << inet_ntoa(this->_serverAddr.sin_addr) << std::endl;
     std::cout << "Server fd: " << this->_serverFd << std::endl;
     std::cout << "Server active: " << this->_active << std::endl;
+    std::cout << "Client fd: " << this->_users.begin()->first << std::endl;
     // std::cout << "Server users: " << this->_users.size() << std::endl;
 }
 void Server::startServer(char *port, char *password)
@@ -203,16 +216,16 @@ void Server::runServer()
             close(this->_serverFd);
             exit(1);
         }
-        for (std::vector<pollfd>::iterator it = _pollfds.begin(); it != _pollfds.end(); ++it)
-        {
-            if (it->revents & POLLIN) // Accedemos a los miembros con '->' porque 'it' es un puntero
-            {
-                if (it->fd == this->_serverFd)
-                    this->newClientConnection();
-                else
-                    this->reciveNewData(it->fd);
-            }
-        }
+		for (size_t i = 0; i < this->_pollfds.size(); i++)
+		{
+			if (this->_pollfds[i].revents & POLLIN)
+			{
+				if (this->_pollfds[i].fd == this->_serverFd)
+					this->newClientConnection();
+				else
+					this->reciveNewData(this->_pollfds[i].fd);
+			}
+		}
    }
    // Cerrar el servidor, clientes, canales, etc
    // stopServer();
@@ -226,13 +239,14 @@ void Server::newClientConnection()
 
     // Aceptar la conexión
     int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient->getClientAddr(), &addrLen);
+    //std::cout << "New client fd: " << newClientFd << std::endl;
     if (newClientFd < 0)
     {
         perror("Error: accept");
         delete newClient; // Asegurarse de liberar la memoria en caso de error
         return;
     }
-
+    //std::cout << "New client fd: " << newClientFd << std::endl;
     // Configurar el nuevo cliente
     newClient->getClientPollFd().fd = newClientFd;
     newClient->getClientPollFd().events = POLLIN;
@@ -248,7 +262,7 @@ void Server::newClientConnection()
     this->_users.insert(std::make_pair(newClientFd, newClient));
 
     // Mensaje de conexión del cliente
-    std::cout << "New client connected: " << newClient->getClientIp() << std::endl;
+    std::cout << "New client connected1: " << newClient->getClientIp() << std::endl;
 
     // Enviar el mensaje de bienvenida al cliente
     send(newClientFd, this->_welcomeMessage.c_str(), this->_welcomeMessage.size(), 0);
@@ -256,12 +270,12 @@ void Server::newClientConnection()
 
 void Server::reciveNewData(int fd)
 {
-    char buffer[1024];
+    char buffer[1024]; // Buffer para recibir los datos, es neceseario porque recv no puede recibir un string directamente
     memset(buffer, 0, 1024);
+    Client *client = this->_users[fd]; // Representa al cliente que envia los datos, que esta en la lista de usuarios
     int bytes = recv(fd, buffer, 1024, 0);
     if (bytes < 0)
-    {
-        
+    {    
         perror("Error: recv");
     }
     else if (bytes == 0)
@@ -273,6 +287,7 @@ void Server::reciveNewData(int fd)
     else
     {
         std::string data(buffer);
+        std::cout << "Client fd: " << fd << std::endl;
         std::cout << "Data received: " << buffer << std::endl;
     }    
 }
