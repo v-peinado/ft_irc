@@ -14,3 +14,4 @@ pendientes:
 -Progreso reciveNewData imprime el emnsaje a modo de prueba en el server, falta parsear name nickname etc, a partir de ahi si se puede regitrar se registra y puede ingresas comandos
 -Solucionado problema Accept, fallo al iterar el vector de _pollfd
 -Siguiente paso comandos de registro
+-splitea el buffer y comprueba en la lista de enumeracion si es un comando, falta implementar que si intenta introducir un comando que no sea de registro de fallo de registro

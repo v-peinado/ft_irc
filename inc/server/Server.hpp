@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/17 00:20:35 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:15:34 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,26 @@
 #include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sstream>
 
 
 #define MAX_CLIENTS 10
+
+enum CommandType {
+    CMD_BONG,
+    CMD_PASS,
+    CMD_NICK,
+    CMD_USER,
+    CMD_QUIT,
+    CMD_KICK,
+    CMD_JOIN,
+    CMD_TOPIC,
+    CMD_MODE,
+    CMD_PART,
+    CMD_PRIVMSG,
+    CMD_INVITE,
+    CMD_UNKNOWN
+};
 
 class Server
 {
@@ -97,7 +114,12 @@ class Server
             void runServer();
             void stopServer();
             void newClientConnection(); // Server connection
-            void reciveNewData(int fd); // Server receive data           
+            void reciveNewData(int fd); // Server receive data
+            std::vector<std::string> parseRecvData(std::string buffer); // Iremos metiendo los posibles comandos recibidos en un vector, para procesarlos uno a uno
+            void parseCommand(std::string &command, int fd); // Procesar los comandos 
+            CommandType getCommandType(const std::string& command);
+            std::vector<std::string> splitCmd(std::string &command);
+                   
         // Server poll                       
 };
     

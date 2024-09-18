@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:09:07 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/18 10:22:52 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Client::Client()
 {
     // Constructor
     // Inicializacion de variables, mejor por lista de inicializacion
+    // las variables se inicializan a 0 o a false, segun el caso, los strings a "", aunque la clase string ya lo hace
 }
 Client::Client(struct sockaddr_in client, int fd)
 {
@@ -100,7 +101,10 @@ std::string const &Client::getClientIp() const
     return this->_clientIp;
 }
 
-
+std::string Client::getBuffer()
+{
+    return this->buffer;
+}
 
 /*****************************************************************************
 * ---------------------------------- SETTERS ------------------------------- *
@@ -151,6 +155,11 @@ void Client::setClientIp(std::string clientIp)
     this->_clientIp = clientIp;
 }
 
+void Client::setBuffer(std::string buffer)
+{
+    this->buffer += buffer;
+}
+
 /*****************************************************************************
 * ---------------------------------- CHANNELS ------------------------------ *
 *****************************************************************************/
@@ -176,3 +185,12 @@ void Client::setClientIp(std::string clientIp)
 //     //Liberar memoria de los canales, si se implementa,, modificacion en futuro segun necesidad
 //     this->_channels.clear();
 // }
+
+/*****************************************************************************
+* --------------------------- MEMBER FUNCTIOS ------------------------------ *
+*****************************************************************************/
+
+void Client::clearBuffer()
+{
+    this->buffer.clear();
+}

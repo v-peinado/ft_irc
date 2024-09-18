@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/17 20:57:37 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/18 15:06:15 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ void Server::printServerInfo()
     std::cout << "Server password: " << this->_password << std::endl;
     std::cout << "Server port: " << this->_port << std::endl;
     // Va a imprimir 0.0.0.0, porque acepta cualquier direccion
-    std::cout << "IP: " << inet_ntoa(this->_serverAddr.sin_addr) << std::endl;
     std::cout << "Server fd: " << this->_serverFd << std::endl;
     std::cout << "Server active: " << this->_active << std::endl;
     std::cout << "Client fd: " << this->_users.begin()->first << std::endl;
@@ -137,7 +136,7 @@ void Server::printServerInfo()
 void Server::startServer(char *port, char *password)
 {
     this->_serverName = "IRCserv: ffons-ti & vpeinado";
-    this->_port = atoi(port);
+    this->_port = atoi(port); // Cambiar atoi por otra funcion
     this->_password = password;
     this->_active = true;
     this->setWelcomeMessage();
@@ -269,7 +268,7 @@ void Server::newClientConnection()
     this->_users.insert(std::make_pair(newClientFd, newClient));
 
     // Mensaje de conexión del cliente
-    std::cout << "New client connected1: " << newClient->getClientIp() << std::endl;
+    std::cout << "New client connected: " << newClient->getClientIp() << std::endl;
 
     // Enviar el mensaje de bienvenida al cliente
     send(newClientFd, this->_welcomeMessage.c_str(), this->_welcomeMessage.size(), 0);
@@ -277,6 +276,7 @@ void Server::newClientConnection()
 
 void Server::reciveNewData(int fd)
 {
+    std::vector<std::string> data; // usaremos el vector para guardar los posibles comandos almacenados en un solo mensaje
     char buffer[1024]; // Buffer para recibir los datos, es neceseario porque recv no puede recibir un string directamente
     memset(buffer, 0, 1024);
     Client *client = this->_users[fd]; // Representa al cliente que envia los datos, que esta en la lista de usuarios
@@ -293,9 +293,104 @@ void Server::reciveNewData(int fd)
     }
     else
     {
-        std::string data(buffer);
-        std::cout << "Client fd: " << fd << std::endl;
-        std::cout << "Data received: " << buffer << std::endl;
+        // Datos recibidos los guardamos en buffer para ser procesados mas adelante
+        client->setBuffer(buffer);
+        std::cout << "Data received: " << client->getBuffer() << std::endl;
+        std::cout << "Client fd: " << fd << std::endl;  
+        if (client->getBuffer().find_first_of("\r\n") != std::string::npos) //Si no devuelve npos, es que ha encontrado el string "\r\n"(fin de linea)
+        {
+            // Procesar los datos
+            // A partir de aqui se procesan los datos, se parsean, se ejecutan los comandos, se envian mensajes, etc
+            data = this->parseRecvData(client->getBuffer());
+            for (size_t i = 0; i < data.size(); i++)
+            {
+                this->parseCommand(data[i], client->getClientFd());
+            }
+        }
+        else
+        {
+            // se ha recibido un mensaje parcial, se espera a recibir el resto
+            return;
+        }        
+    }   
+}
+
+std::vector<std::string> Server::parseRecvData(std::string buffer)
+{
+	std::vector<std::string> returnData;
+	std::istringstream iss(buffer);
+	std::string token;
+    size_t pos = 0;
+	while(std::getline(iss, token))
+	{
+		pos = token.find_first_of("\r\n");
+		if(pos != std::string::npos)
+			token = token.substr(0, pos);  // Eliminar el delimitador "\r\n"
+		returnData.push_back(token);
+	}
+	return returnData;
+}
+std::vector<std::string> Server::splitCmd(std::string &command)
+{
+	std::vector<std::string> returnData;
+	std::istringstream iss(command);
+	std::string token;
+    size_t pos = 0;
+	while(std::getline(iss, token))
+	{
+		pos = token.find_first_of(" \t\v");
+		if(pos != std::string::npos)
+			token = token.substr(0, pos);  // Eliminar el delimitador "\r\n"
+		returnData.push_back(token);
+	}
+	return returnData;
+}
+
+CommandType Server::getCommandType(const std::string& command) {
+    if (command == "BONG" || command == "bong") return CMD_BONG;
+    if (command == "PASS" || command == "pass") return CMD_PASS;
+    if (command == "NICK" || command == "nick") return CMD_NICK;
+    if (command == "USER" || command == "user") return CMD_USER;
+    if (command == "QUIT" || command == "quit") return CMD_QUIT;
+    if (command == "KICK" || command == "kick") return CMD_KICK;
+    if (command == "JOIN" || command == "join") return CMD_JOIN;
+    if (command == "TOPIC" || command == "topic") return CMD_TOPIC;
+    if (command == "MODE" || command == "mode") return CMD_MODE;
+    if (command == "PART" || command == "part") return CMD_PART;
+    if (command == "PRIVMSG" || command == "privmsg") return CMD_PRIVMSG;
+    if (command == "INVITE" || command == "invite") return CMD_INVITE;
+    return CMD_UNKNOWN;
+}
+
+void Server::parseCommand(std::string &command, int fd)
+{
+    if (command.empty())
+        return;
+    std::vector<std::string> splited_cmd = splitCmd(command);
+    size_t found = command.find_first_not_of(" \t\v");
+    if (found != std::string::npos)
+        command = command.substr(found);
+    CommandType cmdType = CMD_UNKNOWN;
+    if (splited_cmd.size() > 0) 
+    {
+        cmdType = getCommandType(splited_cmd[0]);
+    }
+    switch (cmdType) {
+        case CMD_USER:
+            std::cout << "CMD_USER" << std::endl;
+            //this->parseUserCommand(splited_cmd, fd);
+            break;
+        case CMD_NICK:
+            std::cout << "CMD_NICK" << std::endl;
+            //this->parseNickCommand(splited_cmd, fd);
+            break;
+        case CMD_PASS:
+            std::cout << "CMD_PASS" << std::endl;
+            //this->parsePassCommand(splited_cmd, fd);
+            break;
+        default:
+                send(fd, "421 Unknown command\r\n", 21, 0);
+            break;
     }    
 }
 
