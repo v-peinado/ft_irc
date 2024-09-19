@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/18 14:15:34 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 14:02:01 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@
 #define MAX_CLIENTS 10
 
 enum CommandType {
-    CMD_BONG,
     CMD_PASS,
     CMD_NICK,
     CMD_USER,
@@ -44,7 +43,6 @@ enum CommandType {
     CMD_JOIN,
     CMD_TOPIC,
     CMD_MODE,
-    CMD_PART,
     CMD_PRIVMSG,
     CMD_INVITE,
     CMD_UNKNOWN
@@ -89,6 +87,7 @@ class Server
             // Channel *getChannelByName(std::string const &name);
             // ACommand *getCommandByName(std::string const &name);
             std::map<int , Client *> const &getUsers() const;
+            Client *getUserByFd(int fd);
             //  std::map<std::string , Channel *> const &getChannels() const;
             //  std::map<std::string , ACommand *> const &getCommands() const;
         // Setters

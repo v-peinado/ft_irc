@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/18 15:06:15 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 14:48:07 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,48 +42,20 @@ std::string const &Server::getServerName() const
     return this->_serverName;
 }
 
-
-// Client *Server::getUserByFd(int fd)
-// {
-//     std::map<int, Client *>::iterator it = this->_users.find(fd);    
-//     if (it != this->_users.end()) 
-//         return it->second;  // Devuelve el puntero al usuario si existe
-//     else 
-//         return NULL;  // Devuelve null si no se encuentra
-// }
-
-// Channel *Server::getChannelByName(std::string const &name)
-// {
-//     std::map<std::string, Channel *>::iterator it = this->_channels.find(name);
-//     if (it != this->_channels.end())
-//         return it->second;
-//     else
-//         return NULL;  
-// }
-
-// ACommand *Server::getCommandByName(std::string const &name)
-// {
-//     std::map<std::string, ACommand *>::iterator it = this->_commands.find(name);
-//     if (it != this->_commands.end())
-//         return it->second;
-//     else
-//         return NULL;
-// }
+Client *Server::getUserByFd(int fd)
+{
+    // Busca un usuario por su fd, quiza haya que cambiarlo por indices ya que it es un puntero y si se redimensiona puede afectar
+    std::map<int, Client *>::iterator it = this->_users.find(fd);    
+    if (it != this->_users.end()) 
+        return it->second;  // Devuelve el puntero al usuario si existe
+    else 
+        return NULL;  // Devuelve null si no se encuentra
+}
 
 std::map<int , Client *> const &Server::getUsers() const
 {
     return this->_users;
 }
-
-// std::map<std::string , Channel *> const &Server::getChannels() const
-// {
-//     return this->_channels;
-// }
-
-// std::map<std::string , ACommand *> const &Server::getCommands() const
-// {
-//     return this->_commands;
-// }
 
 /******************************************************************************
 * ------------------------------- SETTERS ----------------------------------- *
@@ -330,36 +302,39 @@ std::vector<std::string> Server::parseRecvData(std::string buffer)
 	}
 	return returnData;
 }
-std::vector<std::string> Server::splitCmd(std::string &command)
-{
-	std::vector<std::string> returnData;
-	std::istringstream iss(command);
-	std::string token;
-    size_t pos = 0;
-	while(std::getline(iss, token))
-	{
-		pos = token.find_first_of(" \t\v");
-		if(pos != std::string::npos)
-			token = token.substr(0, pos);  // Eliminar el delimitador "\r\n"
-		returnData.push_back(token);
-	}
-	return returnData;
+std::vector<std::string> Server::splitCmd(std::string& command) {
+    std::vector<std::string> result;
+    std::istringstream iss(command);
+    std::string token;
+    
+    // Extrae cada palabra (separada por espacios) y la añade al vector result
+    while (iss >> token) {
+        result.push_back(token);
+    }
+    
+    return result;
 }
 
 CommandType Server::getCommandType(const std::string& command) {
-    if (command == "BONG" || command == "bong") return CMD_BONG;
-    if (command == "PASS" || command == "pass") return CMD_PASS;
-    if (command == "NICK" || command == "nick") return CMD_NICK;
-    if (command == "USER" || command == "user") return CMD_USER;
-    if (command == "QUIT" || command == "quit") return CMD_QUIT;
-    if (command == "KICK" || command == "kick") return CMD_KICK;
-    if (command == "JOIN" || command == "join") return CMD_JOIN;
-    if (command == "TOPIC" || command == "topic") return CMD_TOPIC;
-    if (command == "MODE" || command == "mode") return CMD_MODE;
-    if (command == "PART" || command == "part") return CMD_PART;
-    if (command == "PRIVMSG" || command == "privmsg") return CMD_PRIVMSG;
-    if (command == "INVITE" || command == "invite") return CMD_INVITE;
+    if (command == "PASS" || command == "/pass") return CMD_PASS;
+    if (command == "NICK" || command == "/nick") return CMD_NICK;
+    if (command == "USER" || command == "/user") return CMD_USER;
+    if (command == "QUIT" || command == "/quit") return CMD_QUIT;
+    if (command == "KICK" || command == "/kick") return CMD_KICK;
+    if (command == "JOIN" || command == "/join") return CMD_JOIN;
+    if (command == "TOPIC" || command == "/topic") return CMD_TOPIC;
+    if (command == "MODE" || command == "/mode") return CMD_MODE;
+    if (command == "PRIVMSG" || command == "/privmsg") return CMD_PRIVMSG;
+    if (command == "INVITE" || command == "/invite") return CMD_INVITE;
     return CMD_UNKNOWN;
+}
+
+void print(std::vector<std::string> &splited_cmd)
+{
+    for (size_t i = 0; i < splited_cmd.size(); i++)
+    {
+        std::cout << "splited_cmd[" << i << "]: " << splited_cmd[i] << std::endl;
+    }
 }
 
 void Server::parseCommand(std::string &command, int fd)
@@ -378,15 +353,42 @@ void Server::parseCommand(std::string &command, int fd)
     switch (cmdType) {
         case CMD_USER:
             std::cout << "CMD_USER" << std::endl;
-            //this->parseUserCommand(splited_cmd, fd);
+            print(splited_cmd);
+            //UserCommand userCommand(splited_cmd, fd);
+            //userCommand.run(); 
             break;
         case CMD_NICK:
             std::cout << "CMD_NICK" << std::endl;
-            //this->parseNickCommand(splited_cmd, fd);
+            print(splited_cmd);
+            //NickCommand nickCommand(splited_cmd, fd);
+            //nickCommand.run();
             break;
         case CMD_PASS:
             std::cout << "CMD_PASS" << std::endl;
-            //this->parsePassCommand(splited_cmd, fd);
+            print(splited_cmd);
+            //PassCommand passCommand(splited_cmd, fd);
+            //passCommand.run();
+            break;
+        case CMD_QUIT:              
+            std::cout << "CMD_QUIT" << std::endl;
+            break;
+        case CMD_KICK:
+            std::cout << "CMD_KICK" << std::endl;
+            break;
+        case CMD_JOIN:
+            std::cout << "CMD_JOIN" << std::endl;
+            break;
+        case CMD_TOPIC:
+            std::cout << "CMD_TOPIC" << std::endl;
+            break;
+        case CMD_MODE:
+            std::cout << "CMD_MODE" << std::endl;
+            break;
+        case CMD_PRIVMSG:
+            std::cout << "CMD_PRIVMSG" << std::endl;
+            break;
+        case CMD_INVITE:
+            std::cout << "CMD_INVITE" << std::endl;
             break;
         default:
                 send(fd, "421 Unknown command\r\n", 21, 0);
@@ -431,3 +433,8 @@ void Server::deleteChannel(std::string const &name)
 
 
 // proxima implementacion
+
+
+/******************************************************************************
+* --------------------------------- PARSING  -------------------------------- *
+******************************************************************************/

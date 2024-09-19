@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:02:28 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/14 22:11:29 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 14:03:14 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 class ACommand
 {
-    private:
+    protected:
         //Forma canonica no implementada
         ACommand(const ACommand &src);
         ACommand &operator=(const ACommand &src);
