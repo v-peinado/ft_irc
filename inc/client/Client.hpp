@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/18 10:22:31 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:55:19 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ class Client
         struct sockaddr_in &getClientAddr();
         std::string const &getClientIp() const;
         struct pollfd &getClientPollFd();
-        std::string getBuffer();
+        std::string &getBuffer();
         
         // Setters
         void setNickname(std::string const &nickname);

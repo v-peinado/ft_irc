@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/19 14:48:07 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:58:05 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,6 +277,10 @@ void Server::reciveNewData(int fd)
             for (size_t i = 0; i < data.size(); i++)
             {
                 this->parseCommand(data[i], client->getClientFd());
+            }
+            if (this->getUserByFd(fd)) // Limpiar el buffer del cliente, si este sigue conectado
+            {
+                this->getUserByFd(fd)->getBuffer().clear();
             }
         }
         else

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/18 10:22:52 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:55:13 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ std::string const &Client::getClientIp() const
     return this->_clientIp;
 }
 
-std::string Client::getBuffer()
+std::string &Client::getBuffer()
 {
     return this->buffer;
 }
