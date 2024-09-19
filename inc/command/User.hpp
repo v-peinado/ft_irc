@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ACommand.hpp                                       :+:      :+:    :+:   */
+/*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/14 19:02:28 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/19 20:24:03 by vpeinado         ###   ########.fr       */
+/*   Created: 2024/09/19 19:09:42 by vpeinado          #+#    #+#             */
+/*   Updated: 2024/09/19 19:11:07 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ACOMMAND_HPP
-#define ACOMMAND_HPP
-
 #include "Server.hpp"
 
-class ACommand
+class User : public ACommand
 {
-    protected:
+    private:
         //Forma canonica no implementada
-        ACommand();
-        ACommand(const ACommand &src);
-        ACommand &operator=(const ACommand &src);
-        Server &_server;
+        User(const User &src);
+        User &operator=(const User &src);
+        
     public:
-        ACommand(Server &server);
-        virtual ~ACommand();
-        virtual void run(std::vector<std::string> args, int fdClient) = 0;             
+        User();
+        ~User();
+        void run();       
 };
-
-#endif

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/19 14:02:01 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/19 20:45:17 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Client.hpp"
-#include "Channel.hpp"
 //#include "ACommand.hpp"
+//#include "Pass.hpp"
+#include "Channel.hpp"
+//#include "User.hpp"
 #include <exception>
 #include <vector>
 #include <poll.h>
@@ -88,6 +90,7 @@ class Server
             // ACommand *getCommandByName(std::string const &name);
             std::map<int , Client *> const &getUsers() const;
             Client *getUserByFd(int fd);
+            std::string const &getPassword() const;
             //  std::map<std::string , Channel *> const &getChannels() const;
             //  std::map<std::string , ACommand *> const &getCommands() const;
         // Setters
@@ -104,7 +107,7 @@ class Server
             //  void insertCommand(std::string const &name, ACommand *command);
             
         // Server config, delete channels, users, commands
-            void deleteUser(int fd);
+            void deleteFromClientList(int fd);
             void deleteChannel(std::string const &name);
 
         // Server start, stop, connection
@@ -119,7 +122,8 @@ class Server
             CommandType getCommandType(const std::string& command);
             std::vector<std::string> splitCmd(std::string &command);
                    
-        // Server poll                       
+        // Server poll  
+        void deleteClientPollFd(int fd);                     
 };
     
 #endif
