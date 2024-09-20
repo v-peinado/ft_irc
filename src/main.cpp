@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:10:55 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/16 17:55:25 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/20 21:15:30 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
         std::cerr << "Usage: ./ircserv [port] [password]" << std::endl; return 1;
     }
     //try and catch
-    Server server;
+    Server server(argv[1], argv[2]);
     server.startServer(argv[1], argv[2]);
     server.printServerInfo();
     server.runServer();

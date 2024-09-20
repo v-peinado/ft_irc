@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 18:05:05 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/20 21:21:19 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,13 @@
 * ------------------------------- CONSTRUCTORS ------------------------------ *
 ******************************************************************************/
 
-Server::Server()
+Server::Server(char *port, char *password)
 {
-    // Constructor
-    // Inicializacion de variables, mejor por lista de inicializacion
+    this->_serverName = "IRCserv: ffons-ti & vpeinado";
+    this->_port = atoi(port); // Cambiar atoi por otra funcion
+    this->_password = password;
+    this->_active = true;
+    this->setWelcomeMessage();
 }
 
 Server::~Server()
@@ -113,13 +116,7 @@ void Server::printServerInfo()
     // std::cout << "Server users: " << this->_users.size() << std::endl;
 }
 void Server::startServer(char *port, char *password)
-{
-    this->_serverName = "IRCserv: ffons-ti & vpeinado";
-    this->_port = atoi(port); // Cambiar atoi por otra funcion
-    this->_password = password;
-    this->_active = true;
-    this->setWelcomeMessage();
-    
+{   
     // Creacion del socket
     this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);
     if (this->_serverFd < 0)
@@ -322,24 +319,36 @@ std::vector<std::string> Server::splitCmd(std::string& command) {
     std::string token;
     
     // Extrae cada palabra (separada por espacios) y la añade al vector result
-    while (iss >> token) {
+    while (iss >> token)
+    {
         result.push_back(token);
     }
     
     return result;
 }
 
-CommandType Server::getCommandType(const std::string& command) {
-    if (command == "PASS" || command == "/pass") return CMD_PASS;
-    if (command == "NICK" || command == "/nick") return CMD_NICK;
-    if (command == "USER" || command == "/user") return CMD_USER;
-    if (command == "QUIT" || command == "/quit") return CMD_QUIT;
-    if (command == "KICK" || command == "/kick") return CMD_KICK;
-    if (command == "JOIN" || command == "/join") return CMD_JOIN;
-    if (command == "TOPIC" || command == "/topic") return CMD_TOPIC;
-    if (command == "MODE" || command == "/mode") return CMD_MODE;
-    if (command == "PRIVMSG" || command == "/privmsg") return CMD_PRIVMSG;
-    if (command == "INVITE" || command == "/invite") return CMD_INVITE;
+CommandType Server::getCommandType(const std::string& command) 
+{
+    if (command == "PASS" || command == "/pass")
+        return CMD_PASS;
+    if (command == "NICK" || command == "/nick")
+        return CMD_NICK;
+    if (command == "USER" || command == "/user")
+        return CMD_USER;
+    if (command == "QUIT" || command == "/quit")
+        return CMD_QUIT;
+    if (command == "KICK" || command == "/kick")
+        return CMD_KICK;
+    if (command == "JOIN" || command == "/join")
+        return CMD_JOIN;
+    if (command == "TOPIC" || command == "/topic")
+        return CMD_TOPIC;
+    if (command == "MODE" || command == "/mode")
+        return CMD_MODE;
+    if (command == "PRIVMSG" || command == "/privmsg")
+        return CMD_PRIVMSG;
+    if (command == "INVITE" || command == "/invite")
+        return CMD_INVITE;
     return CMD_UNKNOWN;
 }
 
@@ -365,18 +374,19 @@ void Server::parseCommand(std::string &command, int fd)
         cmdType = getCommandType(splited_cmd[0]);
     }
     ACommand *commandHandler = NULL;
-    switch (cmdType) {
-        case CMD_USER:
-            std::cout << "CMD_USER" << std::endl;
-            print(splited_cmd);
-            commandHandler = new User(*this);
-            commandHandler->run(splited_cmd, fd);
-            delete commandHandler;
-            break;
+    switch (cmdType) 
+    {
         case CMD_NICK:
             std::cout << "CMD_NICK" << std::endl;
             print(splited_cmd);
             commandHandler = new Nick(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
+            break;
+        case CMD_USER:
+            std::cout << "CMD_USER" << std::endl;
+            print(splited_cmd);
+            commandHandler = new User(*this);
             commandHandler->run(splited_cmd, fd);
             delete commandHandler;
             break;

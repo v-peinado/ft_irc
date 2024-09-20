@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 15:02:11 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/20 21:15:00 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ class Server
 {
     private:
         // Forma canonica no implementada
+        Server();
         Server(const Server &src);
         Server &operator=(const Server &src);
 
@@ -80,7 +81,7 @@ class Server
            
     public:
         // Forma canonica implementada
-        Server();
+        Server(char *port, char *password);
         ~Server();
 
         // Getters, el poner referencias constantes o no, es para que no se pueda modificar el valor, dependera del desarrollo posterior
