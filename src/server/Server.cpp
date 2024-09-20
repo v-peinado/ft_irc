@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 17:18:53 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/20 18:05:05 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Client.hpp"
 #include "Pass.hpp"
 #include "User.hpp"
+#include "Nick.hpp"
 #include <cstdio>
 #include <cerrno>
 

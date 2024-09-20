@@ -15,3 +15,6 @@ pendientes:
 -Solucionado problema Accept, fallo al iterar el vector de _pollfd
 -Siguiente paso comandos de registro
 -splitea el buffer y comprueba en la lista de enumeracion si es un comando, falta implementar que si intenta introducir un comando que no sea de registro de fallo de registro
+-en comando pass funciona pero en un futuro hay que definir los errores en un header para hacer el codigo mas limpio
+-comando user terminado
+- los mensajes send() son provisionales
