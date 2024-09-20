@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/19 20:48:51 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/20 17:18:53 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include "Client.hpp"
 #include "Pass.hpp"
+#include "User.hpp"
 #include <cstdio>
 #include <cerrno>
 
@@ -268,7 +269,7 @@ void Server::reciveNewData(int fd)
         std::cout << "Client disconnected" << std::endl;
         this->deleteClientPollFd(fd);
         this->deleteFromClientList(fd);
-        //borrar tambien de los canales
+        //borrar tambien de los canales, y dentro de los canales, borrar de los usuarios y de los privilegios
         close(fd);
     }
     else
@@ -367,10 +368,16 @@ void Server::parseCommand(std::string &command, int fd)
         case CMD_USER:
             std::cout << "CMD_USER" << std::endl;
             print(splited_cmd);
+            commandHandler = new User(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
             break;
         case CMD_NICK:
             std::cout << "CMD_NICK" << std::endl;
             print(splited_cmd);
+            commandHandler = new Nick(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
             break;
         case CMD_PASS:
             std::cout << "CMD_PASS" << std::endl;

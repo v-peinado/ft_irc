@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 19:19:13 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/19 20:59:22 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:39:45 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,5 @@ void Pass::run(std::vector<std::string> args, int fdClient)
     else
     {
         this->_server.getUserByFd(fdClient)->setRegistered(true);
-        send(fdClient, "001 PASS :Welcome to the IRC server\r\n", 38, 0);
     }
 }
