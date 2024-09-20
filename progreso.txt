@@ -18,3 +18,8 @@ pendientes:
 -en comando pass funciona pero en un futuro hay que definir los errores en un header para hacer el codigo mas limpio
 -comando user terminado
 - los mensajes send() son provisionales
+
+20 sept ---> todo
+-Excepciones
+-Signals
+-Mensajes de error
