@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 13:54:14 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:02:31 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,17 @@ void Server::setWelcomeMessage()
 ******************************************************************************/
 void Server::printServerInfo()
 {
-    // Imprime la informacion del servidor
-    std::cout << "Server name: " << this->_serverName << std::endl;
-    std::cout << "Server password: " << this->_password << std::endl;
-    std::cout << "Server port: " << this->_port << std::endl;
-    std::cout << "Server fd: " << this->_serverFd << std::endl;
-}
+    std::cout << "╔══════════════════════════════════════╗" << std::endl;
+    std::cout << "║        🌐 IRC SERVER INFORMATION     ║" << std::endl;
+    std::cout << "╠══════════════════════════════════════╣" << std::endl;
+    std::cout << "  Server Name     : " << this->_serverName << std::endl;
+    std::cout << "  Server Password : " << this->_password << std::endl;
+    std::cout << "  Server Port     : " << this->_port << std::endl;
+    std::cout << "  Server File Descriptor (fd) : " << this->_serverFd << std::endl;
+    std::cout << "╠══════════════════════════════════════╣" << std::endl;
+    std::cout << "║      🚀 Server is up and running!    ║" << std::endl;
+    std::cout << "╚══════════════════════════════════════╝" << std::endl;
+    }
 void Server::startServer()
 {   
     setSocket();
@@ -365,8 +370,6 @@ std::vector<std::string> Server::splitCmd(std::string& command) {
     std::vector<std::string> result;
     std::istringstream iss(command);
     std::string token;
-    
-    // Extrae cada palabra (separada por espacios) y la añade al vector result
     while (iss >> token)
     {
         result.push_back(token);
