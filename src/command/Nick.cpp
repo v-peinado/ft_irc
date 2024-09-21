@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:39:42 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 18:25:05 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/21 00:13:58 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int Nick::validArgs(std::vector<std::string> args, int fdClient)
         send(fdClient, "451 NICK :You have not registered\r\n", 36, 0);
         return 0;
     }
-    for (int i = 0; i < args[1].length(); i++)
+    for (size_t i = 0; i < args[1].length(); i++)
     {
         if (args[1][i] == ' ')
         {

@@ -6,18 +6,15 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 19:13:05 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 14:43:32 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/21 01:47:09 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef PASS_HPP
 #define PASS_HPP
 
 #include "ACommand.hpp"
 #include "Server.hpp"
-
-
 
 class Pass : public ACommand
 {

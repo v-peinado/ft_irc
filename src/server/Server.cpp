@@ -6,19 +6,15 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 21:21:19 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/21 13:54:14 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include <iostream>
-#include <cstdlib>
 #include "Client.hpp"
 #include "Pass.hpp"
 #include "User.hpp"
 #include "Nick.hpp"
-#include <cstdio>
-#include <cerrno>
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -33,11 +29,7 @@ Server::Server(char *port, char *password)
     this->setWelcomeMessage();
 }
 
-Server::~Server()
-{
-    // Destructor
-    // Limpieza de maps, liberacion de memoria
-}
+Server::~Server(){}
 
 /*****************************************************************************
 * ---------------------------------- GETTERS ------------------------------- *
@@ -75,14 +67,12 @@ void Server::setPollfds(pollfd pollfd)
 {
     if (this->_pollfds.size() >= MAX_CLIENTS)
     {
-        // cambiar por excepciones
-        std::cerr << "Error: max clients reached" << std::endl;
+        throw std::runtime_error("Error: max clients reached");
         return;
     }
     if (pollfd.fd < 2)
     {
-        // cambiar por excepciones
-        std::cerr << "Error: invalid fd" << std::endl;
+        throw std::runtime_error("Error: invalid fd");
         return;
     }
     this->_pollfds.push_back(pollfd);
@@ -109,65 +99,78 @@ void Server::printServerInfo()
     std::cout << "Server name: " << this->_serverName << std::endl;
     std::cout << "Server password: " << this->_password << std::endl;
     std::cout << "Server port: " << this->_port << std::endl;
-    // Va a imprimir 0.0.0.0, porque acepta cualquier direccion
     std::cout << "Server fd: " << this->_serverFd << std::endl;
-    std::cout << "Server active: " << this->_active << std::endl;
-    std::cout << "Client fd: " << this->_users.begin()->first << std::endl;
-    // std::cout << "Server users: " << this->_users.size() << std::endl;
 }
-void Server::startServer(char *port, char *password)
+void Server::startServer()
 {   
-    // Creacion del socket
+    setSocket();
+
+    configServerAddr();
+    
+    setSocketOptions();    
+
+    bindSockets();
+
+    listenAndPoll();
+}
+
+void Server::setSocket()
+{
     this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);
     if (this->_serverFd < 0)
     {
-        // quiza conviene crear excepciones para los errores, y decidir si se cierra el programa o no
-        std::cerr << "Error: socket" << std::endl;
+        throw std::runtime_error("Error: socket failed");
         exit(1);
     }
-    
-    // Configuracion del serverAddr
+}
+
+void Server::configServerAddr()
+{
     std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));
     this->_serverAddr.sin_family = AF_INET; // ipv4
     this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
     this->_serverAddr.sin_port = htons(this->_port); // Puerto
-    
-    //!!!!!!IMPORTANTE!!!!!! (para que no de error de bind)
-    //Configurar el socket para que pueda reutilizarse setsockopt, y fnctl para que no bloquee el puerto
+}
+
+void Server::setSocketOptions()
+{
     int opt = 1;
     if(setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
     {
-        // cambiar por excepciones
-        std::cerr << "Error: setsockopt" << std::endl;
+        throw std::runtime_error("Error: setsockopt");
         close(this->_serverFd);
         exit(1);
     }
     if(fcntl(this->_serverFd, F_SETFL, O_NONBLOCK) < 0)
     {
-        // cambiar por excepciones
-        std::cerr << "Error: fcntl" << std::endl;
+        throw std::runtime_error("Error: fcntl");
         close(this->_serverFd);
         exit(1);
     }
+}
+
+void Server::bindSockets()
+{
     // Bind del socket(vincular), hay que gestionar las signals, paraque al cerrar el servidor, se libere el puerto, si no dara fallo
     if(bind(this->_serverFd, (struct sockaddr *)&this->_serverAddr, sizeof(this->_serverAddr)) < 0)
     {
-        // cambiar por excepciones
-        std::cerr << "Error: bind" << std::endl;
+        throw std::runtime_error("Error: bind");
         close(this->_serverFd);
         exit(1);
     }
-    
+}
+
+void Server::listenAndPoll()
+{
     // Listen del socket, se usa para que el servidor pueda aceptar conexiones
     if(listen(this->_serverFd, MAX_CLIENTS) < 0)
     {
-        std::cerr << "Error: listen" << std::endl;
+        throw std::runtime_error("Error: listen");
         close(this->_serverFd);
         exit(1);
     }
     // Poll, añadir el socket del server a la lista de pollfds, tambien clientes, canales, etc
     // Despues de tener el vector de pollfds, se llama a runServer()
-    // runServer() es el bucle principal del servidor, que constamente esta monitoreando los eventos de los sockets
     pollfd serverPollFd;
     serverPollFd.fd = this->_serverFd;
     serverPollFd.events = POLLIN;
@@ -186,8 +189,7 @@ void Server::runServer()
    {
         if (poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0)
         {
-            // cambiar por excepciones
-            std::cerr << "Error: poll" << std::endl;
+            throw std::runtime_error("Error: poll");
             close(this->_serverFd);
             exit(1);
         }
@@ -212,6 +214,16 @@ void Server::runServer()
    // Cerrar el servidor, clientes, canales, etc
    // stopServer();
 }
+
+void Server::stopServer()
+{
+    // Parada del server
+}
+
+/******************************************************************************
+* ------------------------------- CLIENTS ----------------------------------- *
+******************************************************************************/
+
 void Server::newClientConnection()
 {
     // Crear un nuevo cliente dinámicamente en el heap
@@ -224,7 +236,7 @@ void Server::newClientConnection()
     //std::cout << "New client fd: " << newClientFd << std::endl;
     if (newClientFd < 0)
     {
-        perror("Error: accept");
+        throw std::runtime_error("Error: accept");
         delete newClient; // Asegurarse de liberar la memoria en caso de error
         return;
     }
@@ -259,12 +271,12 @@ void Server::reciveNewData(int fd)
     int bytes = recv(fd, buffer, 1024, 0);
     if (bytes < 0)
     {    
-        perror("Error: recv");
+         throw std::runtime_error("Error: recv");
     }
     else if (bytes == 0)
     {
         // Cliente desconectado
-        std::cout << "Client disconnected" << std::endl;
+        std::cout << "Client disconnected, fd: " << fd << std::endl;
         this->deleteClientPollFd(fd);
         this->deleteFromClientList(fd);
         //borrar tambien de los canales, y dentro de los canales, borrar de los usuarios y de los privilegios
@@ -313,6 +325,42 @@ std::vector<std::string> Server::parseRecvData(std::string buffer)
 	}
 	return returnData;
 }
+
+void Server::deleteFromClientList(int fd)
+{
+    for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+    {
+        if (it->first == fd)
+        {
+            delete it->second;
+            this->_users.erase(it);
+            break;
+        }
+    }
+}
+
+void Server::deleteClientPollFd(int fd)
+{
+    std::cout << "Remove client from poll list-> fd: "
+              << fd
+              << ", ip: "
+              << this->_users[fd]->getClientIp()
+              << ", nick: "
+              << this->_users[fd]->getNickname() << std::endl;
+    for(size_t i = 0; i < this->_pollfds.size(); i++)
+    {
+        if (this->_pollfds[i].fd == fd)
+        {
+            this->_pollfds.erase(this->_pollfds.begin() + i);
+            break;
+        }
+    }
+}
+
+/******************************************************************************
+* ------------------------------- COMMAND ----------------------------------- *
+******************************************************************************/
+
 std::vector<std::string> Server::splitCmd(std::string& command) {
     std::vector<std::string> result;
     std::istringstream iss(command);
@@ -352,7 +400,7 @@ CommandType Server::getCommandType(const std::string& command)
     return CMD_UNKNOWN;
 }
 
-void print(std::vector<std::string> &splited_cmd)
+void Server::printCmd(std::vector<std::string> &splited_cmd)
 {
     for (size_t i = 0; i < splited_cmd.size(); i++)
     {
@@ -378,21 +426,21 @@ void Server::parseCommand(std::string &command, int fd)
     {
         case CMD_NICK:
             std::cout << "CMD_NICK" << std::endl;
-            print(splited_cmd);
+            printCmd(splited_cmd);
             commandHandler = new Nick(*this);
             commandHandler->run(splited_cmd, fd);
             delete commandHandler;
             break;
         case CMD_USER:
             std::cout << "CMD_USER" << std::endl;
-            print(splited_cmd);
+            printCmd(splited_cmd);
             commandHandler = new User(*this);
             commandHandler->run(splited_cmd, fd);
             delete commandHandler;
             break;
         case CMD_PASS:
             std::cout << "CMD_PASS" << std::endl;
-            print(splited_cmd);
+            printCmd(splited_cmd);
             commandHandler = new Pass(*this);
             commandHandler->run(splited_cmd, fd);
             delete commandHandler;
@@ -423,71 +471,3 @@ void Server::parseCommand(std::string &command, int fd)
             break;
     }    
 }
-
-void Server::stopServer()
-{
-    // Parada del server
-}
-
-
-// void Server::insertChannel(std::string const &name, Channel *channel)
-// {
-//     // Inserta un canal
-// }
-
-// void Server::insertCommand(std::string const &name, ACommand *command)
-// {
-//     // Inserta un comando
-// }
-
-void Server::deleteFromClientList(int fd)
-{
-    for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
-    {
-        if (it->first == fd)
-        {
-            delete it->second;
-            this->_users.erase(it);
-            break;
-        }
-    }
-}
-
-void Server::deleteChannel(std::string const &name)
-{
-    // Elimina un canal
-}
-
-// Channel *Server::newChannel(std::string const &name)
-// {
-//     // Crea un nuevo canal
-// }
-
-/******************************************************************************
-* --------------------------------- POLL  ----------------------------------- *
-******************************************************************************/
-
-void Server::deleteClientPollFd(int fd)
-{
-    std::cout << "Remove client from poll list-> fd: "
-              << fd
-              << ", ip: "
-              << this->_users[fd]->getClientIp()
-              << ", name: "
-              << this->_users[fd]->getNickname() << std::endl;
-    for(size_t i = 0; i < this->_pollfds.size(); i++)
-    {
-        if (this->_pollfds[i].fd == fd)
-        {
-            this->_pollfds.erase(this->_pollfds.begin() + i);
-            break;
-        }
-    }
-}
-
-// proxima implementacion
-
-
-/******************************************************************************
-* --------------------------------- PARSING  -------------------------------- *
-******************************************************************************/
