@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 14:07:18 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/21 15:19:37 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 Server::Server(char *port, char *password)
 {
     this->_serverName = "IRCserv: ffons-ti & vpeinado";
-    this->_port = atoi(port); // Cambiar atoi por otra funcion
+    this->_port = atoi(port);
     this->_password = password;
     this->_active = true;
     this->setWelcomeMessage();
@@ -46,12 +46,11 @@ std::string const &Server::getPassword() const
 }
 Client *Server::getUserByFd(int fd)
 {
-    // Busca un usuario por su fd, quiza haya que cambiarlo por indices ya que it es un puntero y si se redimensiona puede afectar
-    std::map<int, Client *>::iterator it = this->_users.find(fd);    
+    std::map<int, Client *>::iterator it = this->_users.find(fd);
     if (it != this->_users.end()) 
-        return it->second;  // Devuelve el puntero al usuario si existe
+        return it->second;
     else 
-        return NULL;  // Devuelve null si no se encuentra
+        return NULL;
 }
 
 std::map<int , Client *> const &Server::getUsers() const
@@ -65,17 +64,17 @@ std::map<int , Client *> const &Server::getUsers() const
 
 void Server::setPollfds(pollfd pollfd)
 {
-    if (this->_pollfds.size() >= MAX_CLIENTS)
+    if (this->_pollfds.size() >= MAX_CLIENTS)                             // MAX_CLIENTS = 10
     {
         throw std::runtime_error("Error: max clients reached");
         return;
     }
-    if (pollfd.fd < 2)
+    if (pollfd.fd < 3)                                                    // 0, 1, 2 son los fd reservados
     {
         throw std::runtime_error("Error: invalid fd");
         return;
     }
-    this->_pollfds.push_back(pollfd);
+    this->_pollfds.push_back(pollfd);                                     // Añadir el pollfd al vector de pollfds
 }
 
 void Server::setWelcomeMessage()
@@ -108,20 +107,20 @@ void Server::printServerInfo()
     }
 void Server::startServer()
 {   
-    setSocket();
+    setSocket();                  // Crear el socket
 
-    configServerAddr();
+    configServerAddr();           // Configurar la direccion del servidor
     
-    setSocketOptions();    
+    setSocketOptions();           // Opcion 1: Reusar la direccion del servidor
 
-    bindSockets();
+    bindSockets();                // Vincular el socket al puerto dado
 
-    listenAndPoll();
+    listenAndPoll();              // Escuchar y monitorear los eventos de los sockets
 }
 
 void Server::setSocket()
 {
-    this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);
+    this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);           // Crear el socket, AF_INET = IPv4, SOCK_STREAM = TCP, 0 = Protocolo por defecto
     if (this->_serverFd < 0)
     {
         throw std::runtime_error("Error: socket failed");
@@ -129,24 +128,24 @@ void Server::setSocket()
     }
 }
 
-void Server::configServerAddr()
-{
-    std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));
-    this->_serverAddr.sin_family = AF_INET; // ipv4
-    this->_serverAddr.sin_addr.s_addr = INADDR_ANY; // Cualquier direccion puede conectarse
-    this->_serverAddr.sin_port = htons(this->_port); // Puerto
+void Server::configServerAddr()                                      // sockaddr_in, se utiliza para definir una dirección de socket IPv4, incluyendo el puerto y la dirección IP.
+{                                    
+    std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));   // Limpiar la estructura de la direccion del servidor
+    this->_serverAddr.sin_family = AF_INET;                          // Familia de direcciones, AF_INET = IPv4
+    this->_serverAddr.sin_addr.s_addr = INADDR_ANY;                  // Recibir conexiones de cualquier direccion IP, 0.0.0.0               
+    this->_serverAddr.sin_port = htons(this->_port);                 // Puerto del servidor, htons() convierte el entero corto sin signo del host al formato de red
 }
 
 void Server::setSocketOptions()
 {
-    int opt = 1;
-    if(setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    int opt = 1;                                                                           // Opcion para reusar la direccion del servidor
+    if(setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)       // SOL_SOCKET = Nivel de socket, SO_REUSEADDR = Reusar la direccion del servidor 
     {
         throw std::runtime_error("Error: setsockopt");
         close(this->_serverFd);
         exit(1);
     }
-    if(fcntl(this->_serverFd, F_SETFL, O_NONBLOCK) < 0)
+    if(fcntl(this->_serverFd, F_SETFL, O_NONBLOCK) < 0)                                     // Configura fd para ser no bloqueante, no esperarán a que se complete la operación si no hay datos disponibles
     {
         throw std::runtime_error("Error: fcntl");
         close(this->_serverFd);
@@ -156,8 +155,7 @@ void Server::setSocketOptions()
 
 void Server::bindSockets()
 {
-    // Bind del socket(vincular), hay que gestionar las signals, paraque al cerrar el servidor, se libere el puerto, si no dara fallo
-    if(bind(this->_serverFd, (struct sockaddr *)&this->_serverAddr, sizeof(this->_serverAddr)) < 0)
+    if(bind(this->_serverFd, (struct sockaddr *)&this->_serverAddr, sizeof(this->_serverAddr)) < 0)     // Vincular el socket al puerto dado
     {
         throw std::runtime_error("Error: bind");
         close(this->_serverFd);
@@ -167,54 +165,40 @@ void Server::bindSockets()
 
 void Server::listenAndPoll()
 {
-    // Listen del socket, se usa para que el servidor pueda aceptar conexiones
-    if(listen(this->_serverFd, MAX_CLIENTS) < 0)
+    if(listen(this->_serverFd, MAX_CLIENTS) < 0)        //Escuchar las conexiones entrantes, es decir, esperar a que los clientes se conecten    
     {
         throw std::runtime_error("Error: listen");
         close(this->_serverFd);
         exit(1);
     }
-    // Poll, añadir el socket del server a la lista de pollfds, tambien clientes, canales, etc
-    // Despues de tener el vector de pollfds, se llama a runServer()
-    pollfd serverPollFd;
-    serverPollFd.fd = this->_serverFd;
-    serverPollFd.events = POLLIN;
-    serverPollFd.revents = 0;
+    pollfd serverPollFd;                               // Estructura pollfd, monitorear los eventos de los sockets
+    serverPollFd.fd = this->_serverFd;                 // File descriptor del servidor
+    serverPollFd.events = POLLIN;                      // Eventos a monitorear, POLLIN = Datos listos para leer
+    serverPollFd.revents = 0;                          // Eventos que ocurrieron, inicializado a 0
     this->setPollfds(serverPollFd);
 }
 
 void Server::runServer()
 {
-    /*
-        Bucle principal del servidor, bucle infinito(mientras el servidor este activo)
-        Poll, para monitorear los eventos de los sockets, con la lista de pollfds, que esta monitoreando
-        Si hay un evento en el socket del servidor, como si alguien se conecta, se envia mensajes, etc
-    */
-   while(this->_active)
-   {
-        if (poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0)
-        {
+   while(this->_active)                                                     // Bucle principal del servidor, se ejecuta mientras el servidor este activo
+   {                                                                            
+        if (poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0)     // poll() monitorea los eventos de los sockets, -1 = Esperar indefinidamente, se llama en cada iteracion del bucle
+        {                                                                   // monitoreando los cambios en los descriptores de archivo cada iteracion
             throw std::runtime_error("Error: poll");
             close(this->_serverFd);
             exit(1);
         }
-        /*
-            Cuando utilizas un iterador, si el vector se modifica (por ejemplo, añadiendo o eliminando elementos),
-            el iterador puede volverse inválido(al redimensionar quiza se guarde enotra direccion de memoria) lo que podría causar un comportamiento indefinido o 
-            errores como el que estás viendo.
-            Un indice en cambio, no se ve afectado por la modificación del vector, ya que siempre apunta al mismo elemento, por ejemplo, si se añade un elemento al vector,
-            el indice 3 siempre sera el indice 3, aunque el vector se redimensione y cambie de direccion de memoria
-        */
-		for (size_t i = 0; i < this->_pollfds.size(); i++)
-		{
-			if (this->_pollfds[i].revents & POLLIN)
-			{
-				if (this->_pollfds[i].fd == this->_serverFd)
-					this->newClientConnection();
-				else
-					this->reciveNewData(this->_pollfds[i].fd);
-			}
-		}
+
+        for (size_t i = 0; i < this->_pollfds.size(); i++)                  // Itera a través de todos los elementos del vector de pollfds
+        {
+            if (this->_pollfds[i].revents & POLLIN)                         // Verifica si hay eventos de lectura disponibles en el socket actual
+            {
+                if (this->_pollfds[i].fd == this->_serverFd)                // Comprueba si el socket activo es el socket del servidor, significa que se intenta acceder a el
+                    this->newClientConnection();                            // Si es el socket del servidor, llama a la función para aceptar nuevas conexiones de clientes
+                else
+                    this->reciveNewData(this->_pollfds[i].fd);              // Si el socket activo no es el  servidor, significa que se reciben datos de un cliente ya conectado
+            }
+        }
    }
    // Cerrar el servidor, clientes, canales, etc
    // stopServer();

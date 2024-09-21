@@ -20,7 +20,9 @@ pendientes:
 - los mensajes send() son provisionales
 
 20 sept ---> todo
--parseo de argumentos, port (1024-65536), pass minimo 8 maximo 16
--Excepciones
+-parseo de argumentos, port (1024-65536), pass minimo 8 maximo 16 // hecho
+-Excepciones  // server hecho
 -Signals
 -Mensajes de error
+-clean code y comentarios
+-reparar warnins // hecho
