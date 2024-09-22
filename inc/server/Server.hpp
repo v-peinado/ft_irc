@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 13:40:02 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:05:53 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,8 @@ class Server
         CommandType getCommandType(const std::string& command);
         void parseCommand(std::string &command, int fd);
         std::vector<std::string> splitCmd(std::string &command);
-        void printCmd(std::vector<std::string> &splited_cmd);                          
+        void printCmd(std::vector<std::string> &splited_cmd);
+                                  
 };
     
 #endif

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 01:23:23 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:06:00 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,33 +25,42 @@
 class Client
 {
     private:
-        //Forma canonica no implementada
+    
+        /*** Orthodox Canonical Form ***/
         
         Client(const Client &src);
         Client &operator=(const Client &src);
 
-        // Client
+        /*** CLIENT ***/
+        
         std::string _nickname;
         std::string _username;
         std::string _realname;
-        std::string buffer; // Ayuda a recibir los datos, que pueden llegar en partes ya que TCP no garantiza que lleguen completos en un solo paquete, se necesita un buffer para ir acumulando los datos
-        bool _registered; // si su estado cambia por un comando de registro, o por un baneao, etc
+        std::string buffer;
+        bool _registered;
 
-        // Client socket
+        /*** SOCKET ***/
+        
         int _clientFd;
         std::string _clientIp;
-        struct sockaddr_in _clientAddr; // Server address, arpa/inet.h
+        struct sockaddr_in _clientAddr;
         struct pollfd _clientPollFd;
+
+        /*** CHANNELS ***/
         
         // Maps
+        //void leaveAllChannels();
         //  std::map<std::string, Channel *> _channels; // Client channels
 
     public:
-        // Forma canonica implementada
+    
+        /*** Orthodox Canonical Form ***/
+        
         Client();
         ~Client();
 
-        // Getters, el poner referencias constantes o no, es para que no se pueda modificar el valor, dependera del desarrollo posterior
+        /*** GETTERS ***/
+        
         std::string const &getNickname() const;
         std::string const &getUsername() const;
         std::string const &getRealname() const;
@@ -62,7 +71,8 @@ class Client
         struct pollfd &getClientPollFd();
         std::string &getBuffer();
         
-        // Setters
+        /*** SETTERS ***/
+        
         void setNickname(std::string const &nickname);
         void setUsername(std::string const &username);
         void setRealname(std::string const &realname);
@@ -72,8 +82,10 @@ class Client
         void setClientIp(std::string clientIp);
         void setBuffer(std::string buffer);
 
-        // client fucntions
-        void clearBuffer();        
+        /*** MEMBER FUNCTIONS ***/
+        
+        void clearBuffer();  
+              
 };
 
 #endif

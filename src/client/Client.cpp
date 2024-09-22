@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 01:03:32 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:07:16 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,10 @@
 ******************************************************************************/
 Client::Client()
 {
-    // Constructor
-    // Inicializacion de variables, mejor por lista de inicializacion
-    // las variables se inicializan a 0 o a false, segun el caso, los strings a "", aunque la clase string ya lo hace
 }
 
 Client::~Client()
 {
-    // Destructor
-    // Limpieza de maps, liberacion de memoria
 }
 
 /*****************************************************************************

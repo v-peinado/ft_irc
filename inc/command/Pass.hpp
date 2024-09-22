@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 19:13:05 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 01:47:09 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:05:45 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,24 @@
 class Pass : public ACommand
 {
     private:
-        //Forma canonica no implementada
+        
+        /*** Orthodox Canonical Form ***/
+        
         Pass(const Pass &src);
         Pass &operator=(const Pass &src);
         Pass();
+        
     public:
+    
+        /*** Orthodox Canonical Form ***/
+        
         Pass(Server &server);
         ~Pass();
-        void run(std::vector<std::string> args, int fdClient);      
+
+        /*** MEMBER FUNCTIONS ***/
+        
+        void run(std::vector<std::string> args, int fdClient);  
+            
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:02:28 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/19 20:24:03 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:03:53 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,26 @@
 class ACommand
 {
     protected:
-        //Forma canonica no implementada
+    
+        /*** Orthodox Canonical Form ***/
+        
         ACommand();
         ACommand(const ACommand &src);
         ACommand &operator=(const ACommand &src);
-        Server &_server;
+
+        /*** SERVER ***/
+        
+        Server &_server;                            // Referencia al servidor
+        
     public:
+    
+        /*** Orthodox Canonical Form ***/
+        
         ACommand(Server &server);
         virtual ~ACommand();
+
+        /*** PURE VIRTUAL METHOD ***/
+        
         virtual void run(std::vector<std::string> args, int fdClient) = 0;             
 };
 

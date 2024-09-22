@@ -24,5 +24,5 @@ pendientes:
 -Excepciones  // server hecho
 -Signals
 -Mensajes de error
--clean code y comentarios
+-clean code y comentarios //hecho
 -reparar warnins // hecho

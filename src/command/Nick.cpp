@@ -6,11 +6,15 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:39:42 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 00:13:58 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:20:16 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Nick.hpp"
+
+/*****************************************************************************
+ * ------------------------------- CONSTRUCTORS ---------------------------- *
+ ****************************************************************************/
 
 Nick::Nick(Server &server) : ACommand(server)
 {
@@ -21,6 +25,10 @@ Nick::~Nick()
 {
     // Destructor
 }
+
+/******************************************************************************
+ * ------------------------------- MEMBER FUNCTIONS ------------------------- *
+ *****************************************************************************/
 
 int Nick::validArgs(std::vector<std::string> args, int fdClient)
 {
@@ -48,9 +56,8 @@ int Nick::validArgs(std::vector<std::string> args, int fdClient)
             return 0;
         }
     }
-    // iterar en lista de clientes del server y comprobar si el nick ya esta en uso, lo haremos con indices
     std::map<int, Client *> users = this->_server.getUsers();
-    for (std::map<int, Client *>::iterator it = users.begin(); it != users.end(); it++)
+    for (std::map<int, Client *>::iterator it = users.begin(); it != users.end(); it++)       //comprobar si el nickname ya esta en uso
     {
         if (it->second->getNickname() == args[1])
         {
@@ -66,7 +73,6 @@ void Nick::run(std::vector<std::string> args, int fdClient)
     if (validArgs(args, fdClient))
     {
         this->_server.getUserByFd(fdClient)->setNickname(args[1]);
-        //001 <nick> :Welcome to the Internet Relay Network <nick>!<user>@<host> quiza habrai que cambiar los mensajes
         std::string welcome = "001 " + args[1] + " :Welcome to the Internet Relay Network " + args[1] + "!" + this->_server.getUserByFd(fdClient)->getUsername() + "@" + this->_server.getServerName() + "\r\n";
         send(fdClient, welcome.c_str(), welcome.length(), 0);
     }

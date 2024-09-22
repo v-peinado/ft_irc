@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:26:37 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/20 18:00:06 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 17:04:22 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 class Nick : public ACommand
 {
     private:
-        //Forma canonica no implementada
+        /**  */
         Nick(const Nick &src);
         Nick &operator=(const Nick &src);
         Nick();
