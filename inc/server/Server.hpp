@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 17:05:53 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 18:43:58 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sstream>
+#include <signal.h>
 #include "Client.hpp"
 #include <cstdio>
 
@@ -62,7 +63,7 @@ class Server
         std::string _serverName;
         std::string _password;
         std::string _welcomeMessage;
-        bool _active;
+        static bool _active;
         
         /*** SOCKETS and POLL ***/
         
@@ -121,6 +122,10 @@ class Server
         void parseCommand(std::string &command, int fd);
         std::vector<std::string> splitCmd(std::string &command);
         void printCmd(std::vector<std::string> &splited_cmd);
+
+        /*** SIGNALS ***/
+
+        static void signalHandler(int signal);
                                   
 };
     

@@ -6,12 +6,14 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:10:55 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/21 13:47:58 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 18:56:24 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include "Server.hpp"
+
+
 
 int parseArgs(char *port, char *password)
 {
@@ -38,6 +40,10 @@ int main(int argc, char **argv)
     try
     {
         Server server(argv[1], argv[2]);
+        //signal(SIGTSTP, SIG_IGN);                           // Ignorar la señal SIGTSTP, ctrl+z, si no se ignora, el proceso se detiene, para reanudarlo se usa el comando fg %(numero del proceso)
+        signal(SIGPIPE, SIG_IGN);                             // Ignorar la señal SIGPIPE, se produce cuando se intenta escribir en un socket que ha sido cerrado por el cliente
+        signal(SIGINT, Server::signalHandler);                // signalHandler es un metodo estatico de la clase Server, la funcion signal no puede llamar a un metodo de instancia, pero si a un metodo estatico
+		signal(SIGQUIT, Server::signalHandler);
         server.startServer();
         server.printServerInfo();
         server.runServer();

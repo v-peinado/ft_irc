@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 16:30:57 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/22 20:02:50 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ Server::Server(char *port, char *password)
     this->_serverName = "IRCserv: ffons-ti & vpeinado";
     this->_port = atoi(port);
     this->_password = password;
-    this->_active = true;
     this->setWelcomeMessage();
 }
 
@@ -180,8 +179,8 @@ void Server::listenAndPoll()
 
 void Server::runServer()
 {
-   while(this->_active)                                                     // Bucle principal del servidor, se ejecuta mientras el servidor este activo
-   {                                                                            
+    while(Server::_active)                                                  // Bucle principal del servidor, se ejecuta mientras el servidor este activo
+    {      
         if (poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0)     // poll() monitorea los eventos de los sockets, -1 = Esperar indefinidamente, se llama en cada iteracion del bucle
         {                                                                   // monitoreando los cambios en los descriptores de archivo cada iteracion
             throw std::runtime_error("Error: poll");
@@ -199,14 +198,13 @@ void Server::runServer()
                     this->reciveNewData(this->_pollfds[i].fd);              // Si el socket activo no es el  servidor, significa que se reciben datos de un cliente ya conectado
             }
         }
-   }
-   // Cerrar el servidor, clientes, canales, etc
-   // stopServer();
+    }
+    stopServer();
 }
 
 void Server::stopServer()
-{
-    // Parada del server
+{      
+    
 }
 
 /******************************************************************************
@@ -442,4 +440,15 @@ void Server::parseCommand(std::string &command, int fd)
                 send(fd, "421 Unknown command\r\n", 21, 0);
             break;
     }    
+}
+
+/******************************************************************************
+* ------------------------------- SIGNALS ----------------------------------- *
+******************************************************************************/
+
+bool Server::_active = true;                                           // Variable estatica, porque se usa en un metodo estatico
+void Server::signalHandler(int signum)                                 // Manejador de señales, se llama cuando se recibe una señal, tambien estatico
+{
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+    Server::_active = false;
 }
