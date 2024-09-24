@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 20:02:50 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/24 12:58:21 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,8 +180,9 @@ void Server::listenAndPoll()
 void Server::runServer()
 {
     while(Server::_active)                                                  // Bucle principal del servidor, se ejecuta mientras el servidor este activo
-    {      
-        if (poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0)     // poll() monitorea los eventos de los sockets, -1 = Esperar indefinidamente, se llama en cada iteracion del bucle
+    {                                                                      
+        if ((poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0) 
+            && Server::_active)                                             // poll() monitorea los eventos de los sockets, -1 = Esperar indefinidamente, se llama en cada iteracion del bucle
         {                                                                   // monitoreando los cambios en los descriptores de archivo cada iteracion
             throw std::runtime_error("Error: poll");
             close(this->_serverFd);
@@ -189,7 +190,7 @@ void Server::runServer()
         }
 
         for (size_t i = 0; i < this->_pollfds.size(); i++)                  // Itera a través de todos los elementos del vector de pollfds
-        {
+        {                                                                   // Esperar 1 ms, para no consumir muchos recursos del sistema
             if (this->_pollfds[i].revents & POLLIN)                         // Si el fd tiene la flag POLLIN activada, significa que hay datos listos para ser leidos
             {
                 if (this->_pollfds[i].fd == this->_serverFd)                // Comprueba si el socket con eventos es el socket del servidor, lo que indica que un nuevo cliente está intentando conectarse
@@ -204,7 +205,21 @@ void Server::runServer()
 
 void Server::stopServer()
 {      
-    
+
+    // cerrar los socketa de los clientes y liberar la memoria
+    for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+    {
+        send(it->first, "Server is shutting down\r\n", 27, 0);
+        delete it->second;
+    }    
+    for (size_t i = 0; i < _pollfds.size(); i++) {
+        if (_pollfds[i].fd != _serverFd) {   
+            close(_pollfds[i].fd);      
+        }
+    }
+    close(_serverFd);
+    // Log or print a message indicating the server has been shut down
+    std::cout << "Server stopped and all connections closed." << std::endl;   
 }
 
 /******************************************************************************
