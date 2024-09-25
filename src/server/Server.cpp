@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/24 12:58:21 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:15:12 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ void Server::stopServer()
     // cerrar los socketa de los clientes y liberar la memoria
     for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
     {
-        send(it->first, "Server is shutting down\r\n", 27, 0);
+        send(it->first, "Server is shutting down\r\n", 26, 0);
         delete it->second;
     }    
     for (size_t i = 0; i < _pollfds.size(); i++) {
