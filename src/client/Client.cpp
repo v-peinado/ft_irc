@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 17:07:16 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:13:54 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,25 @@ Client::Client()
 
 Client::~Client()
 {
+}
+
+Client::Client(Client const &src){*this = src;}
+
+Client &Client::operator=(Client const &src)
+{
+    if (this != &src)
+    {
+        this->_nickname = src._nickname;
+        this->_username = src._username;
+        this->_realname = src._realname;
+        this->buffer = src.buffer;
+        this->_registered = src._registered;
+        this->_clientFd = src._clientFd;
+        this->_clientIp = src._clientIp;
+        this->_clientAddr = src._clientAddr;
+        this->_clientPollFd = src._clientPollFd;
+    }
+    return *this;
 }
 
 /*****************************************************************************

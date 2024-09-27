@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 17:06:00 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:13:23 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ class Client
     
         /*** Orthodox Canonical Form ***/
         
-        Client(const Client &src);
-        Client &operator=(const Client &src);
+        // Client(const Client &src);
+        // Client &operator=(const Client &src);
 
         /*** CLIENT ***/
         
@@ -58,6 +58,8 @@ class Client
         
         Client();
         ~Client();
+        Client(const Client &src);
+        Client &operator=(const Client &src);
 
         /*** GETTERS ***/
         

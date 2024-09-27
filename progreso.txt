@@ -22,7 +22,10 @@ pendientes:
 20 sept ---> todo
 -parseo de argumentos, port (1024-65536), pass minimo 8 maximo 16 // hecho
 -Excepciones  // server hecho
--Signals - error de poll y no manda mensaje de ciuerre de servidor
--Mensajes de error
+-Signals - error de poll y no manda mensaje de ciuerre de servidor   //hecho
+-Mensajes de error // hecho
 -clean code y comentarios //hecho
 -reparar warnins // hecho
+
+27 sept 
+-comandos restantes
