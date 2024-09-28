@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffons-ti <ffons-ti@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:48:40 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/09/25 16:37:17 by ffons-ti         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:12:31 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,22 @@
 #include <vector>
 
 #include "Client.hpp"
-#include "Server.hpp"
 
 class Client;
+
 class Channel
 {
     private:
         int has_key;
         int invite_only;
-        int limit;
+        size_t limit;
         int topic_rest;
         std::string name;
         std::string key;
         std::string topic_name;
-        std::vector<Client> clients;
-	    std::vector<Client> admins;
+        std::vector<int> invitedFds;
+        std::vector<Client *> clients;
+	    std::vector<Client *> admins;
     public:
         Channel();
         ~Channel();
@@ -42,7 +43,7 @@ class Channel
         // Getters
         int GetHasKey();
         int GetInviteOnly();
-        int GetLimit();
+        size_t GetLimit();
         int GetTopicRest();
         std::string GetChannelName();
         std::string GetKey();
@@ -50,6 +51,8 @@ class Channel
         std::string ClientChannelList();
         Client *GetClient(int fd);
         Client *GetAdmin(int fd);
+        std::vector<Client *> GetClients();
+        std::vector<Client *> GetAdmins();
         
         // Setters
         void SetInvitOnly(int invit_only);
@@ -61,12 +64,13 @@ class Channel
 	    void SetName(std::string nam);
 
         // Methods
-        void addClient(Client newClient);
-        void addAdmin(Client newClient);
+        void addClient(Client *newClient);
+        void addAdmin(Client *newClient);
         void removeClient(int fd);
         void removeAdmin(int fd);
         bool changeClientToAdmin(std::string &nick);
         bool changeAdminToClient(std::string &nick);
+        bool isClientInvited(int fd);
 
         
         void sendToAll(std::string rply);

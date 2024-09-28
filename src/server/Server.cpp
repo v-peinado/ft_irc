@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/25 17:25:54 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:22:40 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Pass.hpp"
 #include "User.hpp"
 #include "Nick.hpp"
+#include "Join.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -385,6 +386,8 @@ CommandType Server::getCommandType(const std::string& command)
         return CMD_PRIVMSG;
     if (command == "INVITE" || command == "/invite")
         return CMD_INVITE;
+    if (command == "INFO" || command == "/info")
+        return CMD_INFO;
     return CMD_UNKNOWN;
 }
 
@@ -395,7 +398,22 @@ void Server::printCmd(std::vector<std::string> &splited_cmd)
         std::cout << "splited_cmd[" << i << "]: " << splited_cmd[i] << std::endl;
     }
 }
-
+void Server::printInfo()
+{
+    //printar lista de canales
+    std::cout << "Channels: " << std::endl;
+    for (std::map<std::string, Channel *>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+    {
+        std::cout << "Channel: " << it->first << std::endl;
+        //printar lista de usuarios
+        std::cout << "Users: " << std::endl;
+        for (size_t i = 0; i < it->second->GetClients().size(); i++)
+        {
+            std::cout << "User: " << it->second->GetClients()[i]->getNickname() << std::endl;
+        }
+    }
+    //printar lista de usuarios y sus canales    
+}
 void Server::parseCommand(std::string &command, int fd)
 {
     if (command.empty())                                            // Comprobamos si el comando esta vacio    
@@ -409,6 +427,9 @@ void Server::parseCommand(std::string &command, int fd)
     ACommand *commandHandler = NULL;                                // Puntero a la clase abstracta ACommand, inicializado a NULL, lo usaremos para crear los objetos de los comandos
     switch (cmdType)                                                
     {
+        case CMD_INFO:
+            printInfo();
+            break;
         case CMD_NICK:
             std::cout << "CMD_NICK" << std::endl;
             printCmd(splited_cmd);                                  // Imprimir el comando spliteado
@@ -438,6 +459,10 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         case CMD_JOIN:
             std::cout << "CMD_JOIN" << std::endl;
+            printCmd(splited_cmd); 
+            commandHandler = new Join(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
             break;
         case CMD_TOPIC:
             std::cout << "CMD_TOPIC" << std::endl;
@@ -466,4 +491,22 @@ void Server::signalHandler(int signum)                                 // Maneja
 {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
     Server::_active = false;
+}
+
+/******************************************************************************
+* ------------------------------- CHANNELS ---------------------------------- *
+******************************************************************************/
+
+std::map<std::string, Channel *> &Server::getChannels()
+{
+    return this->_channels;
+}
+
+Channel *Server::getChannelByName(std::string channelName)
+{
+    std::map<std::string, Channel *>::iterator it = this->_channels.find(channelName);
+    if (it != this->_channels.end())
+        return it->second;
+    else
+        return NULL;
 }

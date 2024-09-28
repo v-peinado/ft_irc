@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 18:43:58 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:20:13 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <sstream>
 #include <signal.h>
 #include "Client.hpp"
+#include "Channel.hpp"
 #include <cstdio>
 
 #define MAX_CLIENTS 10
@@ -44,7 +45,8 @@ enum CommandType {
     CMD_MODE,
     CMD_PRIVMSG,
     CMD_INVITE,
-    CMD_UNKNOWN
+    CMD_UNKNOWN,
+    CMD_INFO
 };
 
 class Server
@@ -74,6 +76,10 @@ class Server
         /*** USERS ***/
         
         std::map<int , Client *> _users;
+
+        /*** CHANNELS ***/
+
+        std::map<std::string, Channel *> _channels;     //nueva
          
     public:
         
@@ -88,8 +94,7 @@ class Server
         std::map<int , Client *> const &getUsers() const;
         Client *getUserByFd(int fd);
         std::string const &getPassword() const;
-        
-            
+             
         /*** SETTERS ***/
 
         void setPollfds(pollfd pollfd);
@@ -114,7 +119,13 @@ class Server
         void reciveNewData(int fd);
         std::vector<std::string> parseRecvData(std::string buffer);
         void deleteFromClientList(int fd);
-        void deleteClientPollFd(int fd); 
+        void deleteClientPollFd(int fd);
+
+        /*** CHANNELS ***/
+        
+        Channel *getChannelByName(std::string channelName);                         //nueva
+        void deleteChannel(std::string channel);                        //nueva
+        std::map<std::string, Channel *> &getChannels();       //nueva
         
         /*** COMMANDS ***/
         
@@ -122,6 +133,7 @@ class Server
         void parseCommand(std::string &command, int fd);
         std::vector<std::string> splitCmd(std::string &command);
         void printCmd(std::vector<std::string> &splited_cmd);
+        void printInfo();
 
         /*** SIGNALS ***/
 

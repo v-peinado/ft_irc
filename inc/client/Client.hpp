@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/27 19:13:23 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/28 17:19:48 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -47,10 +48,8 @@ class Client
         struct pollfd _clientPollFd;
 
         /*** CHANNELS ***/
-        
-        // Maps
-        //void leaveAllChannels();
-        //  std::map<std::string, Channel *> _channels; // Client channels
+
+        std::vector<std::string> _channels;          //nueva
 
     public:
     
@@ -86,7 +85,12 @@ class Client
 
         /*** MEMBER FUNCTIONS ***/
         
-        void clearBuffer();  
+        void clearBuffer();
+
+        /*** CHANNELS ***/
+
+        void deleteFromAllChannels(std::string channelName);            //nueva
+        //std::vector<std::string> getChannels();                     //nueva
               
 };
 
