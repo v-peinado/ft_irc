@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:48:40 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/09/28 20:12:31 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/29 01:02:15 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Channel
         std::string name;
         std::string key;
         std::string topic_name;
-        std::vector<int> invitedFds;
+        std::vector<int> _invitedClients;
         std::vector<Client *> clients;
 	    std::vector<Client *> admins;
     public:

@@ -30,4 +30,7 @@ pendientes:
 27 sept 
 -comandos restantes
 -join //hecho
--privmsg
+-privmsg //hecho
+-kick
+-mode
+-invite

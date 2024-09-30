@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 18:19:11 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/09/28 21:53:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/29 01:02:26 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void Channel::sendToAll(std::string rply)
 
 bool Channel::isClientInvited(int fd)
 {
-	for (std::vector<int>::iterator it = invitedFds.begin(); it != invitedFds.end(); ++it)
+	for (std::vector<int>::iterator it = _invitedClients.begin(); it != _invitedClients.end(); ++it)
 	{
 		if (*it == fd)
 			return true;

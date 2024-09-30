@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/28 22:20:39 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/09/30 11:19:22 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "User.hpp"
 #include "Nick.hpp"
 #include "Join.hpp"
+#include "Privmsg.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -473,6 +474,9 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         case CMD_PRIVMSG:
             std::cout << "CMD_PRIVMSG" << std::endl;
+            printCmd(splited_cmd); 
+            commandHandler = new Privmsg(*this);
+            commandHandler->run(splited_cmd, fd);
             break;
         case CMD_INVITE:
             std::cout << "CMD_INVITE" << std::endl;
