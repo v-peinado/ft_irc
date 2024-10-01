@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/01 12:22:00 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/01 13:15:38 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,16 @@ Client *Server::getUserByFd(int fd)
         return it->second;
     else 
         return NULL;
+}
+
+Client *Server::getUserByNick(std::string nick)
+{
+    for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
+    {
+        if (it->second->getNickname() == nick)
+            return it->second;
+    }
+    return NULL;
 }
 
 std::map<int , Client *> const &Server::getUsers() const

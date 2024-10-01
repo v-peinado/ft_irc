@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/01 12:24:53 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/01 13:19:35 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,5 @@ void Kick::run(std::vector<std::string> args, int fdClient)
     this->_server.getChannelByName(channelName)->sendToAll(msg);
 
     //avisar al expulsado
-    send(this->_server.getChannelByName(channelName)->GetClientFd(nickname), "KICK " + channelName + " " + nickname + " :" + reason + "\r\n", 34, 0);
-
+    send(this->_server.getChannelByName(channelName)->GetClientFd(nickname), msg.c_str(), msg.size(), 0);
 }

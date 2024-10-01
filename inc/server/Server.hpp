@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/28 20:20:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/01 13:15:19 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ class Server
         std::string const &getServerName() const;
         std::map<int , Client *> const &getUsers() const;
         Client *getUserByFd(int fd);
+        Client *getUserByNick(std::string nick);
         std::string const &getPassword() const;
              
         /*** SETTERS ***/
