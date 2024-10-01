@@ -31,6 +31,7 @@ pendientes:
 -comandos restantes
 -join //hecho
 -privmsg //hecho
--kick
+-kick //hecho
 -mode
 -invite
+-topic

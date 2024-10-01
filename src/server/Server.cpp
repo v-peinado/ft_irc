@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/30 11:19:22 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:22:00 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Nick.hpp"
 #include "Join.hpp"
 #include "Privmsg.hpp"
+#include "Kick.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -458,6 +459,10 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         case CMD_KICK:
             std::cout << "CMD_KICK" << std::endl;
+            printCmd(splited_cmd);
+            commandHandler = new Kick(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
             break;
         case CMD_JOIN:
             std::cout << "CMD_JOIN" << std::endl;

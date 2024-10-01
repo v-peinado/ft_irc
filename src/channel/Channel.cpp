@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 18:19:11 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/09/29 01:02:26 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:10:13 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,26 @@ Client *Channel::GetClient(int fd)
             return *it;
     }
     return NULL;
+}
+
+Client *Channel::GetClientByName(std::string nick)
+{
+	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		if ((*it)->getNickname() == nick)
+			return *it;
+	}
+	return NULL;
+}
+
+int Channel::GetClientFd(std::string nick)
+{
+	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		if ((*it)->getNickname() == nick)
+			return (*it)->getClientFd();
+	}
+	return -1;
 }
 
 Client *Channel::GetAdmin(int fd)
@@ -162,4 +182,36 @@ bool Channel::isClientInvited(int fd)
 			return true;
 	}
 	return false;
+}
+
+bool Channel::isClientAdmin(int fd)
+{
+	for (std::vector<Client *>::iterator it = admins.begin(); it != admins.end(); ++it)
+	{
+		if ((*it)->getClientFd() == fd)
+			return true;
+	}
+	return false;
+}
+
+bool Channel::isClientInChannel(int fd)
+{
+	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		if ((*it)->getClientFd() == fd)
+			return true;
+	}
+	return false;
+}
+
+void Channel::removeInvitedClient(int fd)
+{
+	for (std::vector<int>::iterator it = _invitedClients.begin(); it != _invitedClients.end(); ++it)
+	{
+		if (*it == fd)
+		{
+			_invitedClients.erase(it);
+			break;
+		}
+	}
 }
