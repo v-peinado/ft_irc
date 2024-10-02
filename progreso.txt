@@ -33,5 +33,5 @@ pendientes:
 -privmsg //hecho
 -kick //hecho
 -mode
--invite
+-invite //hecho
 -topic
