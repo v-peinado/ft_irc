@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:39:42 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 17:20:16 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/02 23:13:42 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,12 @@ int Nick::validArgs(std::vector<std::string> args, int fdClient)
         send(fdClient, "431 NICK :No nickname given\r\n", 30, 0);
         return 0;
     }
-    if (this->_server.getUserByFd(fdClient) == NULL || this->_server.getUserByFd(fdClient)->getRegistered() == 0
-        || this->_server.getUserByFd(fdClient)->getRealname().empty() || this->_server.getUserByFd(fdClient)->getUsername().empty())
-    {
-        send(fdClient, "451 NICK :You have not registered\r\n", 36, 0);
-        return 0;
-    }
+    // if (this->_server.getUserByFd(fdClient) == NULL || this->_server.getUserByFd(fdClient)->getRegistered() == 0
+    //     || this->_server.getUserByFd(fdClient)->getRealname().empty() || this->_server.getUserByFd(fdClient)->getUsername().empty())
+    // {
+    //     send(fdClient, "451 NICK :You have not registered\r\n", 36, 0);
+    //     return 0;
+    // }
     for (size_t i = 0; i < args[1].length(); i++)
     {
         if (args[1][i] == ' ')

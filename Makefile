@@ -10,12 +10,12 @@ RED		= 	\033[31m
 NAME	= ircserv
 #Compiler
 CC		= c++
-CFLAGS	=  -std=c++98 #-Wall -Wextra -Werror
+CFLAGS	=  -std=c++98 -Wall -Wextra -Werror
 #CFLAGS	+= -g3 -fsanitize=address
 RM		= rm -f
 
 #Includes
-INC			= -I ./inc/ -I ./inc/channel/ -I ./inc/client/ -I ./inc/server/
+INC			= -I ./inc/  -I ./inc/client/ -I ./inc/server/ -I ./inc/command/ -I ./inc/channel/
 
 #Source files
 SRC_DIR	= src/
