@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 13:57:46 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/28 23:48:15 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 21:12:29 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void Join::run(std::vector<std::string> args, int fdClient)
             Channel *newChannel = new Channel();
             newChannel->SetName(channelName);
             newChannel->SetKey(channelKey);
-            if (channelKey.empty())
+            if (channelKey == "")
                 newChannel->SetHasKey(0);
             else
                 newChannel->SetHasKey(1);

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 14:08:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/02 23:09:22 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 20:24:18 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ int User::validArgs(std::vector<std::string> args)
         return 0;
     // if (args[2] != "0" || args[3] != "*")
     //     return 0;
-    // std::string realname = args[4];
-    // // if (realname[0] != ':')
-    // //     return 0;
+    std::string realname = args[4];
+    if (realname[0] != ':')
+        return 0;
     return 1;
 }
 
@@ -62,6 +62,11 @@ void User::run(std::vector<std::string> args, int fdClient)
     else
     {
         send(fdClient, "461 USER :Not enough parameters\r\n", 35, 0);
+    }
+    if (!this->_server.getUserByFd(fdClient)->getUsername().empty() && !this->_server.getUserByFd(fdClient)->getRealname().empty() && this->_server.getUserByFd(fdClient)->getRegistered() == 1)
+    {
+        std::string welcome = "001 " + args[1] + " :Welcome to the Internet Relay Network " + args[1] + "!" + this->_server.getUserByFd(fdClient)->getUsername() + "@" + this->_server.getServerName() + "\r\n";
+        send(fdClient, welcome.c_str(), welcome.length(), 0);
     }
 }
     

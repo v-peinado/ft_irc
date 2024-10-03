@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:39:42 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/02 23:13:42 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 19:59:28 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,12 @@ void Nick::run(std::vector<std::string> args, int fdClient)
     if (validArgs(args, fdClient))
     {
         this->_server.getUserByFd(fdClient)->setNickname(args[1]);
-        std::string welcome = "001 " + args[1] + " :Welcome to the Internet Relay Network " + args[1] + "!" + this->_server.getUserByFd(fdClient)->getUsername() + "@" + this->_server.getServerName() + "\r\n";
-        send(fdClient, welcome.c_str(), welcome.length(), 0);
+        if (!this->_server.getUserByFd(fdClient)->getUsername().empty() && !this->_server.getUserByFd(fdClient)->getRealname().empty() && this->_server.getUserByFd(fdClient)->getRegistered() == 0)
+        {
+            this->_server.getUserByFd(fdClient)->setRegistered(1);
+            std::string welcome = "001 " + args[1] + " :Welcome to the Internet Relay Network " + args[1] + "!" + this->_server.getUserByFd(fdClient)->getUsername() + "@" + this->_server.getServerName() + "\r\n";
+            send(fdClient, welcome.c_str(), welcome.length(), 0);
+        }
     }
     else
     {

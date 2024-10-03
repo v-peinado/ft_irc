@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/01 13:15:38 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 20:11:38 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "Join.hpp"
 #include "Privmsg.hpp"
 #include "Kick.hpp"
+#include "Ping.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -400,6 +401,10 @@ CommandType Server::getCommandType(const std::string& command)
         return CMD_INVITE;
     if (command == "INFO" || command == "/info")
         return CMD_INFO;
+    if (command == "PING" || command == "/ping")
+        return CMD_PING;
+    if (command == "CAP" || command == "/cap")
+        return CMD_CAP;
     return CMD_UNKNOWN;
 }
 
@@ -440,6 +445,8 @@ void Server::parseCommand(std::string &command, int fd)
     ACommand *commandHandler = NULL;                                // Puntero a la clase abstracta ACommand, inicializado a NULL, lo usaremos para crear los objetos de los comandos
     switch (cmdType)                                                
     {
+        case CMD_CAP:
+            break;
         case CMD_INFO:
             printInfo();
             break;
@@ -454,6 +461,13 @@ void Server::parseCommand(std::string &command, int fd)
             std::cout << "CMD_USER" << std::endl;
             printCmd(splited_cmd);
             commandHandler = new User(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
+            break;
+       case CMD_PING:
+            std::cout << "CMD_PING" << std::endl;
+            printCmd(splited_cmd);
+            commandHandler = new Ping(*this);
             commandHandler->run(splited_cmd, fd);
             delete commandHandler;
             break;
@@ -497,7 +511,7 @@ void Server::parseCommand(std::string &command, int fd)
             std::cout << "CMD_INVITE" << std::endl;
             break;
         default:
-                send(fd, "421 Unknown command\r\n", 21, 0);
+            send(fd, "421 Unknown command2\r\n", strlen("421 Unknown command2\r\n"), 0);  //falla su impresion
             break;
     }    
 }
