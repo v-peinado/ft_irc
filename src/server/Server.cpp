@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 20:11:38 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 23:25:34 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,8 @@ void Server::setWelcomeMessage()
         "*************************************************\n"
         "*          Welcome to the IRC Server!           *\n"
         "*   1. Use PASS <password> to log in            *\n"
-        "*   2. Use USER <username> 0 * :<realname>      *\n"
-        "*   3. Use NICK <nickname> to set your nickname *\n"
+        "*   2. Use NICK <nickname> to set your nickname *\n"  
+        "*   3. Use USER <username> 0 * :<realname>      *\n"
         "*************************************************\n";
 }
 

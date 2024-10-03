@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 14:08:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 20:24:18 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 23:37:14 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void User::run(std::vector<std::string> args, int fdClient)
         send(fdClient, "461 USER :Not enough parameters\r\n", 35, 0);
         return;
     }
-    if (this->_server.getUserByFd(fdClient)->getRegistered() == 0 || this->_server.getUserByFd(fdClient) == NULL)
+    if (this->_server.getUserByFd(fdClient)->getRegistered() == 0 || this->_server.getUserByFd(fdClient) == NULL || this->_server.getUserByFd(fdClient)->getNickname().empty())
     {
         send(fdClient, "451 USER :You have not registered\r\n", 36, 0);
         return;

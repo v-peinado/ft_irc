@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 13:57:46 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 21:12:29 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/03 22:55:32 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void Join::run(std::vector<std::string> args, int fdClient)
             //check si el canal tiene clave y si la clave es correcta
             if(it->second->GetHasKey() == 1 && it->second->GetKey() != channelKey)
             {
-                send(fdClient, "475 JOIN :Cannot join channel (+k)\r\n", 36, 0);
+                send(fdClient, "Cannot join channel (+k) :Bad channel key\r\n", 45, 0);
                 return;
             }
             //check si el canal esta lleno
