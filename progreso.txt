@@ -37,9 +37,9 @@ pendientes:
 -topic
 
 3 oct
--arreglada conexion irssi
--pass, nick y user se deben meter en este orden, si no falla, como en irssi
--privmsg manda mensajes a varios canales /privmsg #canal1,#canal2 <mensaje> y varios clientes, si alguno no existe da error(verificar)
+-arreglada conexion irssi - hecho
+-pass, nick y user se deben meter en este orden, si no falla, como en irssi - hecho
+-privmsg manda mensajes a varios canales /privmsg #canal1,#canal2 <mensaje> y varios clientes, si alguno no existe da error(verificar) - hecho
 -join , hay que controlar que no se pueda unir a un canal con contrasena, en un principio no se puede pero irssi abre una ventana aunq luego no sea funcional ni miembro,
                 quiza haya que parsearlo antes para que no tenga ese comportamient
 -invite y kick hay qe revisarlos

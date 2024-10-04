@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 23:25:34 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/04 14:35:15 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -417,11 +417,13 @@ void Server::printCmd(std::vector<std::string> &splited_cmd)
 }
 void Server::printInfo()
 {
+    
     //printar lista de canales
     std::cout << "Channels: " << std::endl;
     for (std::map<std::string, Channel *>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
     {
         std::cout << "Channel: " << it->first << std::endl;
+        std::cout << "Key: " << it->second->GetKey() << std::endl;
         //printar lista de usuarios
         std::cout << "Users: " << std::endl;
         for (size_t i = 0; i < it->second->GetClients().size(); i++)
@@ -543,4 +545,24 @@ Channel *Server::getChannelByName(std::string channelName)
         return it->second;
     else
         return NULL;
+}
+
+/******************************************************************************
+* ------------------------------- SEND -------------------------------------- *
+******************************************************************************/
+
+
+void Server::sendError(int code, std::string clientname, std::string channelname, int fd, std::string msg)
+{
+	std::stringstream ss;
+	ss << ":localhost " << code << " " << clientname << " " << channelname << msg;
+	std::string resp = ss.str();
+	if(send(fd, resp.c_str(), resp.size(),0) == -1)
+		std::cerr << "Error send() fail" << std::endl;
+}
+
+void Server::sendResponse(std::string response, int fd)
+{
+	if(send(fd, response.c_str(), response.size(), 0) == -1)
+		std::cerr << "Response send() fail" << std::endl;
 }

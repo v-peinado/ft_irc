@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 20:09:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/04 11:43:59 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,11 @@ class Server
         /*** SIGNALS ***/
 
         static void signalHandler(int signal);
+
+        /*** SEND ***/
+
+        void sendError(int code, std::string clientname, std::string channelname, int fd, std::string msg);
+        void sendResponse(std::string response, int fd);
                                   
 };
     

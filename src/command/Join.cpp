@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 13:57:46 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 22:55:32 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/04 14:39:16 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void Join::run(std::vector<std::string> args, int fdClient)
         std::map<std::string, Channel *>::iterator it = channels.find(channelName);
         if (it == channels.end())
         {
+            std::cout << "El canal no existe" << std::endl;
             Channel *newChannel = new Channel();
             newChannel->SetName(channelName);
             newChannel->SetKey(channelKey);
@@ -78,41 +79,49 @@ void Join::run(std::vector<std::string> args, int fdClient)
             send(fdClient, "JOIN :You have joined the channel\r\n", 35, 0);
             std::cout << this->_server.getUserByFd(fdClient)->getNickname() << " has joined the channel " << channelName << std::endl;
         }
-        else
+        if (it != channels.end())
         {
+            std::cout << "El canal ya existe" << std::endl;
+            // Verificar si el usuario ya está en el canal
             if (it->second->GetClient(fdClient) != NULL)
             {
                 send(fdClient, "443 JOIN :Already in channel\r\n", 31, 0);
                 return;
             }
-            //check si el canal tiene clave y si la clave es correcta
-            if(it->second->GetHasKey() == 1 && it->second->GetKey() != channelKey)
+
+            // Verificar si el canal tiene clave y si la clave es correcta
+            if (it->second->GetHasKey() == 1 && it->second->GetKey() != channelKey)
             {
-                send(fdClient, "Cannot join channel (+k) :Bad channel key\r\n", 45, 0);
+                std::cout << "clave incorrecta" << std::endl;
+                this->_server.sendError(475, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Cannot join channel (+k) - bad key\r\n");
                 return;
             }
-            //check si el canal esta lleno
-            if(it->second->GetLimit() != 0 && it->second->GetLimit() == it->second->GetClients().size())
+
+            // Verificar si el canal está lleno
+            if (it->second->GetLimit() != 0 && it->second->GetLimit() == it->second->GetClients().size())
             {
                 send(fdClient, "471 JOIN :Cannot join channel (+l)\r\n", 36, 0);
                 return;
             }
-            //check si el canal es solo para invitados y si estas invitado
-            if(it->second->GetInviteOnly() == 1 && !it->second->isClientInvited(fdClient))
+
+            // Verificar si el canal es solo para invitados
+            if (it->second->GetInviteOnly() == 1 && !it->second->isClientInvited(fdClient))
             {
                 send(fdClient, "473 JOIN :Cannot join channel (+i)\r\n", 36, 0);
                 return;
             }
-            if (it->second->GetInviteOnly() == 1 && it->second->isClientInvited(fdClient))
-            {
-   
-                it->second->addClient(this->_server.getUserByFd(fdClient));
-                std::cout << this->_server.getUserByFd(fdClient)->getNickname() << " has joined the channel " << channelName << std::endl;
-                it->second->sendToAll("JOIN :" + this->_server.getUserByFd(fdClient)->getNickname() + "\r\n");
-                return;
-            }
+
+            // Si es invitado, agregarlo al canal
             it->second->addClient(this->_server.getUserByFd(fdClient));
             std::cout << this->_server.getUserByFd(fdClient)->getNickname() << " has joined the channel " << channelName << std::endl;
-            it->second->sendToAll("JOIN :" + this->_server.getUserByFd(fdClient)->getNickname() + "\r\n");
-        }     
+
+            // Informar a todos en el canal
+            std::string joinMsg = ":" + this->_server.getUserByFd(fdClient)->getNickname() + 
+                          "!" + this->_server.getUserByFd(fdClient)->getUsername() + 
+                          "@localhost" + 
+                          " JOIN :" + channelName + "\r\n";
+    
+            it->second->sendToAll(joinMsg); // Enviar el mensaje a todos en el canal
+        }
+            
 }
