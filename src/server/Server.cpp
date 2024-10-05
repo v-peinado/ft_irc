@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/04 14:35:15 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/05 20:41:01 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,7 @@ void Server::configServerAddr()                                      // sockaddr
     this->_serverAddr.sin_family = AF_INET;                          // Familia de direcciones, AF_INET = IPv4
     this->_serverAddr.sin_addr.s_addr = INADDR_ANY;                  // Recibir conexiones de cualquier direccion IP, 0.0.0.0               
     this->_serverAddr.sin_port = htons(this->_port);                 // Puerto del servidor, htons() convierte el entero corto sin signo del host al formato de red
+    this->_serverHost = inet_ntoa(this->_serverAddr.sin_addr);       // Direccion IP del servidor, usamos la funcion inet_ntoa para convertir la direccion IP a una cadena
 }
 
 void Server::setSocketOptions()
@@ -555,7 +556,7 @@ Channel *Server::getChannelByName(std::string channelName)
 void Server::sendError(int code, std::string clientname, std::string channelname, int fd, std::string msg)
 {
 	std::stringstream ss;
-	ss << ":localhost " << code << " " << clientname << " " << channelname << msg;
+	ss << ":" << this->_serverHost << " " << code << " " << clientname << " " << channelname << msg;
 	std::string resp = ss.str();
 	if(send(fd, resp.c_str(), resp.size(),0) == -1)
 		std::cerr << "Error send() fail" << std::endl;

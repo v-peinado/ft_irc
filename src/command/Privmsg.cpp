@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 22:41:44 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/06 00:08:02 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int Privmsg::validArgs(std::vector<std::string> args, int fdClient)
 {
     if (args.size() < 3)
     {
+        //this->_server.sendError(475, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Cannot join channel (+k) - bad key\r\n");
         send(fdClient, "411 PRIVMSG :No recipient given\r\n", 34, 0);
         return 0;
     }
@@ -117,7 +118,7 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
                     continue;  
 
                 // Preparar el mensaje
-                std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " :" + message + "\r\n";
+                std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
 
                 // Enviar el mensaje
                 send(recipient->getClientFd(), rply.c_str(), rply.size(), 0);
@@ -133,7 +134,7 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
                 // Verificar si el usuario existe
                 if (it->second->getNickname() == msgTargets[i])
                 {
-                    std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " :" + message + "\r\n";
+                   std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
                     send(it->first, rply.c_str(), rply.size(), 0);
                 }
                 else

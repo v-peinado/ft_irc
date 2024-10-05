@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/28 17:19:48 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/05 19:13:35 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ class Client
         std::string const &getClientIp() const;
         struct pollfd &getClientPollFd();
         std::string &getBuffer();
+        std::string getHostName();
         
         /*** SETTERS ***/
         

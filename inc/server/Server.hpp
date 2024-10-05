@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/04 11:43:59 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/05 20:35:38 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ class Server
         std::string _serverName;
         std::string _password;
         std::string _welcomeMessage;
+        std::string _serverHost;
         static bool _active;
         
         /*** SOCKETS and POLL ***/

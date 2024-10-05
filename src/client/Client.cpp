@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 17:43:08 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/27 19:13:54 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/05 19:13:29 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,11 @@ std::string const &Client::getClientIp() const
 std::string &Client::getBuffer()
 {
     return this->buffer;
+}
+std::string Client::getHostName()
+{
+    std::string hostName = getNickname() + "!" + getUsername();
+    return hostName;
 }
 
 /*****************************************************************************

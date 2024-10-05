@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 23:03:27 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/05 23:59:52 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void Kick::run(std::vector<std::string> args, int fdClient)
     }
     if (!this->_server.getChannelByName(channelName)->isClientAdmin(fdClient))
     {
-        send(fdClient, "482 KICK :You're not channel operator\r\n", 41, 0);
+        send(fdClient, "482 KICK :You're not channel operator\r\n", 39, 0);
         return;
     }
     if (this->_server.getUserByFd(fdClient)->getNickname() == nickname)
@@ -88,22 +88,21 @@ void Kick::run(std::vector<std::string> args, int fdClient)
         send(fdClient, "441 KICK :They aren't on that channel\r\n", 41, 0);
         return;
     }
-    if (this->_server.getChannelByName(channelName)->isClientAdmin(this->_server.getChannelByName(channelName)->GetClientFd(nickname))) // si un operador intenta echar a otro operador
-    {
-        send(fdClient, "482 KICK :You're not channel operator\r\n", 41, 0);
-        return;
-    }
+    // if (this->_server.getChannelByName(channelName)->isClientAdmin(this->_server.getChannelByName(channelName)->GetClientFd(nickname))) // si un operador intenta echar a otro operador
+    // {
+    //     send(fdClient, "482 KICK :You're not channel operator\r\n", 41, 0);
+    //     return;
+    // }
+    //avisar al canal que se ha expulsado a un usuario
+    if (reason[0] != ':')
+        reason = ":" + reason;
+    std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
+        "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
+        " KICK " + channelName + " " + nickname + reason + "\r\n";  
+    this->_server.getChannelByName(channelName)->sendToAll(kickMsg);
     //expulsar al usuario del canal 
     this->_server.getChannelByName(channelName)->removeClient(this->_server.getChannelByName(channelName)->GetClientFd(nickname));
     //borrarlo de la lista de invitados
     if (this->_server.getChannelByName(channelName)->isClientInvited(this->_server.getChannelByName(channelName)->GetClientFd(nickname)))
         this->_server.getChannelByName(channelName)->removeInvitedClient(this->_server.getChannelByName(channelName)->GetClientFd(nickname));   
-    //avisar al canal
-    if (reason.empty())
-        reason = "Kicked by " + this->_server.getUserByFd(fdClient)->getNickname();
-    std::string msg = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " KICK " + channelName + " " + nickname + " :" + reason + "\r\n";
-    this->_server.getChannelByName(channelName)->sendToAll(msg);
-
-    //avisar al expulsado
-    send(this->_server.getChannelByName(channelName)->GetClientFd(nickname), msg.c_str(), msg.size(), 0);
 }
