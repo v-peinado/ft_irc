@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/05 20:41:01 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/06 18:34:50 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "Privmsg.hpp"
 #include "Kick.hpp"
 #include "Ping.hpp"
+#include "Invite.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -147,7 +148,7 @@ void Server::configServerAddr()                                      // sockaddr
     this->_serverAddr.sin_family = AF_INET;                          // Familia de direcciones, AF_INET = IPv4
     this->_serverAddr.sin_addr.s_addr = INADDR_ANY;                  // Recibir conexiones de cualquier direccion IP, 0.0.0.0               
     this->_serverAddr.sin_port = htons(this->_port);                 // Puerto del servidor, htons() convierte el entero corto sin signo del host al formato de red
-    this->_serverHost = inet_ntoa(this->_serverAddr.sin_addr);       // Direccion IP del servidor, usamos la funcion inet_ntoa para convertir la direccion IP a una cadena
+    this->_serverHost = "127.0.0.1";                                 // Direccion IP del servidor, localhost
 }
 
 void Server::setSocketOptions()
@@ -415,6 +416,7 @@ void Server::printCmd(std::vector<std::string> &splited_cmd)
     {
         std::cout << "splited_cmd[" << i << "]: " << splited_cmd[i] << std::endl;
     }
+    std::endl(std::cout);
 }
 void Server::printInfo()
 {
@@ -512,9 +514,13 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         case CMD_INVITE:
             std::cout << "CMD_INVITE" << std::endl;
+            printCmd(splited_cmd); 
+            commandHandler = new Invite(*this);
+            commandHandler->run(splited_cmd, fd);
             break;
         default:
-            send(fd, "421 Unknown command2\r\n", strlen("421 Unknown command2\r\n"), 0);  //falla su impresion
+            std::string response = ": 421 " + this->getUserByFd(fd)->getNickname() + splited_cmd[0] + " :Unknown command\r\n";
+            send(fd, response.c_str(), response.size(), 0);  //falla su impresion
             break;
     }    
 }

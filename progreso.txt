@@ -48,5 +48,9 @@ pendientes:
 -imprescindible los mensajes de servidor error y cliente en el formato correcto, anadir ip adress(anadida pero no rellenada) del cliente a la clase, porque es necesario
 https://modern.ircdocs.horse/
 -PONG -- hecho?
--kick - faltan mensajes de error
--invite
+-kick - faltan mensajes de error ------hecho
+-kick que se pueda expulsar a varios a la vez Parameters: <channel> <user> *( "," <user> ) [<comment>]
+-privmsg mensajes de error  ---------hecho
+-invite ------- hecho
+-pass nick y user -faltan mensajes de error
+-join listado de usuarios del canal

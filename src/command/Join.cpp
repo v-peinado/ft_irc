@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 13:57:46 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/05 21:00:25 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:50:51 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ int Join::validArgs(std::vector<std::string> args, int fdClient)
         this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
         return 0;
     }
+    //irssi anade el canal por defecto si no se pone el # delante
+    // if (channelName[0] != '#')
+    // {
+    //     this->_server.sendError(403, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such channel\r\n");
+    //     return 0;
+    // }
     return 1;
 }
 
@@ -46,7 +52,7 @@ void Join::run(std::vector<std::string> args, int fdClient)
 {
         if (this->validArgs(args, fdClient) == 0)
             return;
-        std::string channelName = args[1][0] == '#' ? args[1] : "#" + args[1];
+        std::string channelName = args[1][0] == '#' ? args[1] : "#" + args[1];  //solo se añade el # si no lo tiene, irssi lo hace automaticamente
         std::string channelKey = args.size() == 3 ? args[2] : ""; //quiza no se permitA el condicional ternario
         std::map<std::string, Channel *> &channels = this->_server.getChannels();
         std::map<std::string, Channel *>::iterator it = channels.find(channelName);
@@ -79,7 +85,6 @@ void Join::run(std::vector<std::string> args, int fdClient)
             // Verificar si el canal tiene clave y si la clave es correcta
             if (it->second->GetHasKey() == 1 && it->second->GetKey() != channelKey)
             {
-                std::cout << "clave incorrecta" << std::endl;
                 this->_server.sendError(475, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Cannot join channel (+k) - bad key\r\n");
                 return;
             }

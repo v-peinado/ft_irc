@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/05 23:59:52 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/06 17:17:02 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,21 @@ Kick::~Kick()
 
 int Kick::validArgs(std::vector<std::string> args, int fdClient)
 {
+    std::string channelName = "";
     if (args.size() < 3)
     {
-        send(fdClient, "461 KICK :Not enough parameters\r\n", 34, 0);
+        this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
+        //send(fdClient, "461 KICK :Not enough parameters\r\n", 34, 0);
         return 0;
     }
     if (args[1].empty())
     {
-        send(fdClient, "461 KICK :Not enough parameters\r\n", 34, 0);
+        this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
         return 0;
     }
     if (args[2].empty())
     {
-        send(fdClient, "461 KICK :Not enough parameters\r\n", 34, 0);
+        this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
         return 0;
     }
     return 1;
@@ -59,33 +61,37 @@ void Kick::run(std::vector<std::string> args, int fdClient)
     std::string nickname = args[2];                           // Nickname del usuario a expulsar
     std::string reason = args.size() == 4 ? args[3] : "";     // Razon de la expulsión, si exsite una razon se van sumando als palabras
     for(size_t i = 3 ; i < args.size(); i++)
-        reason += " " + args[i];                                         
+    {
+        if(i == 3)
+            reason = args[i];
+        else
+            reason += " " + args[i];
+    }                                        
     //kick <#channel> <nickname> [:<reason>]
     //validar si se tienen permisos para hacer kick
     if (!this->_server.getChannelByName(channelName))
     {
-        send(fdClient, "403 KICK :No such channel\r\n", 32, 0);
+        this->_server.sendError(403, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such channel\r\n");
         return;
     }
     if (!this->_server.getChannelByName(channelName)->isClientInChannel(fdClient))
     {
-        send(fdClient, "442 KICK :You're not on that channel\r\n", 39, 0);
+        this->_server.sendError(442, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :You're not on that channel\r\n");
         return;
     }
     if (!this->_server.getChannelByName(channelName)->isClientAdmin(fdClient))
     {
-        send(fdClient, "482 KICK :You're not channel operator\r\n", 39, 0);
+        this->_server.sendError(482, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :You're not channel operator\r\n");
         return;
     }
     if (this->_server.getUserByFd(fdClient)->getNickname() == nickname)
     {
-        send(fdClient, "482 KICK :You may not kick yourself\r\n", 39, 0);
+        //send(fdClient, "482 KICK :You may not kick yourself\r\n", 39, 0);
         return;
     }
-    
     if (!this->_server.getChannelByName(channelName)->isClientInChannel(this->_server.getChannelByName(channelName)->GetClientFd(nickname)))
     {
-        send(fdClient, "441 KICK :They aren't on that channel\r\n", 41, 0);
+        this->_server.sendError(441, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :They aren't on that channel\r\n");
         return;
     }
     // if (this->_server.getChannelByName(channelName)->isClientAdmin(this->_server.getChannelByName(channelName)->GetClientFd(nickname))) // si un operador intenta echar a otro operador
@@ -94,8 +100,11 @@ void Kick::run(std::vector<std::string> args, int fdClient)
     //     return;
     // }
     //avisar al canal que se ha expulsado a un usuario
-    if (reason[0] != ':')
+    if (!reason.empty() && reason[0] != ':')
         reason = ":" + reason;
+    if (!reason.empty())
+        reason = " " + reason;
+        
     std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
         "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
         " KICK " + channelName + " " + nickname + reason + "\r\n";  

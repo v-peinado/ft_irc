@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/06 00:08:02 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:49:03 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,15 @@ Privmsg::~Privmsg()
 
 int Privmsg::validArgs(std::vector<std::string> args, int fdClient)
 {
+    std::string channelName = "";
     if (args.size() < 3)
     {
-        //this->_server.sendError(475, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Cannot join channel (+k) - bad key\r\n");
-        send(fdClient, "411 PRIVMSG :No recipient given\r\n", 34, 0);
+        this->_server.sendError(411, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, ":No recipient given\r\n");
         return 0;
     }
     if (args[2] == "")
     {
-        send(fdClient, "412 PRIVMSG :No text to send\r\n", 30, 0);
+        this->_server.sendError(412, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, ":No text to send\r\n");
         return 0;
     }
     return 1;
@@ -97,14 +97,14 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
             // Comprobar si el usuario está en el canal
             if (!userInChannel(channel, user))
             {
-                send(fdClient, "404 PRIVMSG :Cannot send to channel\r\n", 38, 0);
+                this->_server.sendError(404, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, ":Cannot send to channel\r\n");
                 return;
             }
 
             // Verificar si el canal existe
             if (channel == NULL)
             {
-                send(fdClient, "401 PRIVMSG :No such nick/channel\r\n", 34, 0);
+                this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, ":No such nick/channel\r\n");
                 return;
             }
 
@@ -134,12 +134,12 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
                 // Verificar si el usuario existe
                 if (it->second->getNickname() == msgTargets[i])
                 {
-                   std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
+                    std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
                     send(it->first, rply.c_str(), rply.size(), 0);
                 }
                 else
                 {
-                    send(fdClient, "401 PRIVMSG :No such nick/channel\r\n", 34, 0);
+                    this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, ":No such nick/channel\r\n");
                     return;
                 }
             }
