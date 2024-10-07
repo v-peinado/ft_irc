@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/06 18:34:50 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:49:25 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,11 @@ Client *Server::getUserByNick(std::string nick)
 std::map<int , Client *> const &Server::getUsers() const
 {
     return this->_users;
+}
+
+std::string &Server::getHost()
+{
+    return this->_serverHost;
 }
 
 /******************************************************************************
@@ -441,6 +446,14 @@ void Server::parseCommand(std::string &command, int fd)
 {
     if (command.empty())                                            // Comprobamos si el comando esta vacio    
         return;
+    // if (this->getUserByFd(fd)->getUsername().empty())               // Comprobamos si el usuario esta conectado, quiza dentro de cada comando                          
+    // {
+    //     std::string channelName = "";
+    //     this->sendError(451, 
+    //             this->getUserByFd(fd)->getNickname(), 
+    //             channelName, fd, " :You have not registered\r\n");        
+    //     return;
+    // }
     std::vector<std::string> splited_cmd = splitCmd(command);       // Splitear el comando por los espacios
     CommandType cmdType = CMD_UNKNOWN;                              // Tipo de comando, una variable de tipo CommandType(enum), inicializado a CMD_UNKNOWN
     if (splited_cmd.size() > 0)                                     // Si el comando spliteado tiene mas de 0 elementos

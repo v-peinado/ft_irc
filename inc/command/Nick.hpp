@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:26:37 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/28 14:00:12 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:01:04 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ class Nick : public ACommand
         /*** MEMBER FUNCTIONS ***/
         
         int validArgs(std::vector<std::string> args, int fdClient);
-        void run(std::vector<std::string> args, int fdClient);  
+        void run(std::vector<std::string> args, int fdClient); 
+        int isValidNickname(std::string& nickname);
             
 };
 

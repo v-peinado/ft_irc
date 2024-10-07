@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/05 20:35:38 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:48:12 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ class Server
         Client *getUserByFd(int fd);
         Client *getUserByNick(std::string nick);
         std::string const &getPassword() const;
+        std::string &getHost();
              
         /*** SETTERS ***/
 

@@ -52,5 +52,5 @@ https://modern.ircdocs.horse/
 -kick que se pueda expulsar a varios a la vez Parameters: <channel> <user> *( "," <user> ) [<comment>]
 -privmsg mensajes de error  ---------hecho
 -invite ------- hecho
--pass nick y user -faltan mensajes de error
+-pass nick y user -faltan mensajes de error ---hecho
 -join listado de usuarios del canal
