@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 14:17:14 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/02 20:17:22 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 12:09:20 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,8 @@ class Topic : public ACommand
 
         /*** MEMBER FUNCTIONS ***/
         
-        //int validArgs(std::vector<std::string> args, int fdClient);
-        //void run(std::vector<std::string> args, int fdClient);  
+        int validArgs(std::vector<std::string> args, int fdClient);
+        void run(std::vector<std::string> args, int fdClient);  
             
 };
-
 #endif

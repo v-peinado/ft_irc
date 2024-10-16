@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 18:19:11 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/10/01 12:10:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:24:35 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ void Channel::SetName(std::string nam){this->name = nam;}
 
 void Channel::addClient (Client *newClient){clients.push_back(newClient);}
 void Channel::addAdmin (Client *newClient){admins.push_back(newClient);}
+void Channel::addInvitedClients(int fd){_invitedClients.push_back(fd);}
 void Channel::removeClient (int fd)
 {
     for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it){

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:48:40 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/10/01 12:09:52 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:23:52 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ class Channel
 
         // Methods
         void addClient(Client *newClient);
+        void addInvitedClients(int fd);
         void addAdmin(Client *newClient);
         void removeClient(int fd);
         void removeAdmin(int fd);

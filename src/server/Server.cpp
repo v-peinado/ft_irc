@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/07 14:49:25 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:11:53 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include "Kick.hpp"
 #include "Ping.hpp"
 #include "Invite.hpp"
+#include "Mode.hpp"
+#include "Topic.hpp"
 
 /******************************************************************************
 * ------------------------------- CONSTRUCTORS ------------------------------ *
@@ -515,9 +517,17 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         case CMD_TOPIC:
             std::cout << "CMD_TOPIC" << std::endl;
+            printCmd(splited_cmd); 
+            commandHandler = new Topic(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
             break;
         case CMD_MODE:
             std::cout << "CMD_MODE" << std::endl;
+            printCmd(splited_cmd); 
+            commandHandler = new Mode(*this);
+            commandHandler->run(splited_cmd, fd);
+            delete commandHandler;
             break;
         case CMD_PRIVMSG:
             std::cout << "CMD_PRIVMSG" << std::endl;

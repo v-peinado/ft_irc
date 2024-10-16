@@ -6,14 +6,12 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:10:55 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/24 12:36:25 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/15 11:21:51 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include "Server.hpp"
-
-
 
 int parseArgs(char *port, char *password)
 {
@@ -33,9 +31,16 @@ int parseArgs(char *port, char *password)
 
 int main(int argc, char **argv)
 {  
+
+    if (argc < 3)
+    {
+        std::cerr << "Usage: ./ircserv [port] [password]" << std::endl;
+        return 1;
+    }
     if (argc == 3 && parseArgs(argv[1], argv[2]) == 0)
     {   
-        std::cerr << "Usage: ./ircserv [port] [password]" << std::endl; return 1;
+        std::cerr << "Usage: ./ircserv [port] [password]" << std::endl;
+        return 1;
     }
     try
     {

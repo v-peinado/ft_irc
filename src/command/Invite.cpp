@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 13:01:35 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/06 19:51:05 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:31:30 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void Invite::run(std::vector<std::string> args, int fdClient)
         this->_server.sendError(443, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :is already on channel\r\n");
         return;
     }
-    channel->addClient(invitedClient); // Añadir el usuario al canal
+    channel->addInvitedClients(invitedClient->getClientFd()); // Añadir el usuario al canal
     std::string inviteMsg = ": 341 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + invitedClient->getNickname() + " " + channelName + "\r\n";
     send(fdClient, inviteMsg.c_str(), inviteMsg.size(), 0); // Enviar mensaje de exito
     std::string invite = ":" + invitedClient->getHostName() + 
