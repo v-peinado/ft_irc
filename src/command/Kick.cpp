@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/06 17:17:02 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 13:27:27 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,6 @@ void Kick::run(std::vector<std::string> args, int fdClient)
         this->_server.sendError(441, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :They aren't on that channel\r\n");
         return;
     }
-    // if (this->_server.getChannelByName(channelName)->isClientAdmin(this->_server.getChannelByName(channelName)->GetClientFd(nickname))) // si un operador intenta echar a otro operador
-    // {
-    //     send(fdClient, "482 KICK :You're not channel operator\r\n", 41, 0);
-    //     return;
-    // }
     //avisar al canal que se ha expulsado a un usuario
     if (!reason.empty() && reason[0] != ':')
         reason = ":" + reason;

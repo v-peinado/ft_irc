@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/05 19:13:35 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 14:03:01 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,7 @@ class Client
 
         /*** CHANNELS ***/
 
-        void deleteFromAllChannels(std::string channelName);            //nueva
-        //std::vector<std::string> getChannels();                     //nueva
+        std::vector<std::string> getChannels();                     //nueva
               
 };
 

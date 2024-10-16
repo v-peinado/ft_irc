@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 18:19:11 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/10/15 13:24:35 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 13:56:57 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ std::string Channel::ClientChannelList()
 
 std::vector<Client *> Channel::GetClients(){return this->clients;}
 std::vector<Client *> Channel::GetAdmins(){return this->admins;}
+std::vector<int> Channel::GetInvitedClients(){return this->_invitedClients;}
 
 Client *Channel::GetClient(int fd)
 {

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/15 12:11:53 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 14:10:20 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,9 +293,9 @@ void Server::reciveNewData(int fd)
     else if (bytes == 0)                                                            // Si recv devuelve 0, el cliente se ha desconectado
     {
         std::cout << "Client disconnected, fd: " << fd << std::endl;
-        this->deleteClientPollFd(fd);                                               // Borrar el cliente de la listas, estructuras, etc  
-        this->deleteFromClientList(fd);
-        //borrar tambien de los canales, y dentro de los canales, borrar de los usuarios y de los privilegios
+        this->deleteClientPollFd(fd);
+        this->deleteFromAllChannels(fd);                                            // Borrar el cliente de la listas, estructuras, etc  
+        this->deleteFromClientList(fd);       
         close(fd);
     }
     else                                                                            // Si recv devuelve un valor positivo, se han recibido datos
@@ -368,6 +368,11 @@ void Server::deleteClientPollFd(int fd)
             break;
         }
     }
+}
+
+void Server::deleteFromAllChannels(int fd)
+{
+    (void)fd;
 }
 
 /******************************************************************************
@@ -543,7 +548,7 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         default:
             std::string response = ": 421 " + this->getUserByFd(fd)->getNickname() + splited_cmd[0] + " :Unknown command\r\n";
-            send(fd, response.c_str(), response.size(), 0);  //falla su impresion
+            send(fd, response.c_str(), response.size(), 0);
             break;
     }    
 }

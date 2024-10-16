@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/07 14:48:12 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 14:09:04 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,11 @@ class Server
         std::vector<std::string> parseRecvData(std::string buffer);
         void deleteFromClientList(int fd);
         void deleteClientPollFd(int fd);
+        void deleteFromAllChannels(int fd);
 
         /*** CHANNELS ***/
         
-        Channel *getChannelByName(std::string channelName);                         //nueva
-        void deleteChannel(std::string channel);                        //nueva
+        Channel *getChannelByName(std::string channelName);     //nueva
         std::map<std::string, Channel *> &getChannels();       //nueva
         
         /*** COMMANDS ***/

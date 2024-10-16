@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:48:40 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/10/15 13:23:52 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 13:56:45 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ class Channel
         Client *GetAdmin(int fd);
         std::vector<Client *> GetClients();
         std::vector<Client *> GetAdmins();
+        std::vector<int> GetInvitedClients();
         
         // Setters
         void SetInvitOnly(int invit_only);
