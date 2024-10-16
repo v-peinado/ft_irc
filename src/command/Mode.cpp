@@ -146,7 +146,7 @@ void Mode::run(std::vector<std::string> args, int fdClient)
 	if (args.size() == 2)
 	{
 		std::string modes;
-		std::string rply = "324 " + channel->GetChannelName();
+		std::string rply = ": 324 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + channel->GetChannelName();
 		if (channel->GetTopicRest())
 			modes += "t";
 		if (channel->GetInviteOnly())
@@ -157,6 +157,8 @@ void Mode::run(std::vector<std::string> args, int fdClient)
 			modes += "l";
 		if (modes.size())
 			rply += " +" + modes + "\r\n";
+        else
+            rply += " \r\n";
 		send(fdClient, rply.c_str(), rply.size(), 0);
 	}
 	else

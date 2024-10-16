@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 13:57:46 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/15 13:20:12 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 22:57:49 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,6 @@ int Join::validArgs(std::vector<std::string> args, int fdClient)
         this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
         return 0;
     }
-    //irssi anade el canal por defecto si no se pone el # delante
-    // if (channelName[0] != '#')
-    // {
-    //     this->_server.sendError(403, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such channel\r\n");
-    //     return 0;
-    // }
     return 1;
 }
 
@@ -56,11 +50,14 @@ void Join::run(std::vector<std::string> args, int fdClient)
         std::string channelKey = args.size() == 3 ? args[2] : ""; //quiza no se permitA el condicional ternario
         std::map<std::string, Channel *> &channels = this->_server.getChannels();
         std::map<std::string, Channel *>::iterator it = channels.find(channelName);
-        if (it == channels.end())
+        if (it == channels.end())         //si no existe el canal, se crea
         {
-            Channel *newChannel = new Channel();
+            // Creamos nuevo canal y seteamos sus atributos
+            Channel *newChannel = new Channel();        
             newChannel->SetName(channelName);
             newChannel->SetKey(channelKey);
+            
+            // Si la clave del canal está vacía, se setea a 0, de lo contrario a 1
             if (channelKey == "")
                 newChannel->SetHasKey(0);
             else
@@ -72,9 +69,14 @@ void Join::run(std::vector<std::string> args, int fdClient)
                           "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
                           " JOIN " + channelName + "\r\n";   
             newChannel->sendToAll(joinMsg);
+            std::string rply = ": 366 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + channelName + " :End of /NAMES list\r\n";
+            this->_server.sendResponse(rply, fdClient);
+            std::string topic = newChannel->GetTopicName() == "" ? "No topic is set" : newChannel->GetTopicName();
+            rply = ": 332 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + channelName + " :" + topic + "\r\n";
+            this->_server.sendResponse(rply, fdClient);
             std::cout << this->_server.getUserByFd(fdClient)->getNickname() << " has joined the channel " << channelName << std::endl;
         }
-        if (it != channels.end())
+        if (it != channels.end())  // no se llega al final del map, por lo que el canal ya existe
         {
             // Verificar si el usuario ya está en el canal
             if (it->second->GetClient(fdClient) != NULL)
@@ -101,7 +103,6 @@ void Join::run(std::vector<std::string> args, int fdClient)
                 this->_server.sendError(473, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Cannot join channel (+i)\r\n");
                 return;
             }
-
             // Si es invitado, agregarlo al canal
             it->second->addClient(this->_server.getUserByFd(fdClient));
             std::cout << this->_server.getUserByFd(fdClient)->getNickname() << " has joined the channel " << channelName << std::endl;
@@ -109,7 +110,12 @@ void Join::run(std::vector<std::string> args, int fdClient)
             // Informar a todos en el canal
             std::string joinMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
                           "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
-                          " JOIN " + channelName + "\r\n";   
+                          " JOIN " + channelName + "\r\n";  
             it->second->sendToAll(joinMsg); // Enviar el mensaje a todos en el canal
+            std::string rply = ": 366 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + channelName + " :End of /NAMES list\r\n";
+            this->_server.sendResponse(rply, fdClient);
+            std::string topic = it->second->GetTopicName() == "" ? "No topic is set" : it->second->GetTopicName();
+            rply = ": 332 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + channelName + " :" + topic + "\r\n";
+            this->_server.sendResponse(rply, fdClient);
         }            
 }

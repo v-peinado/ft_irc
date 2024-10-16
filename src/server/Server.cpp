@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 14:23:30 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 16:01:13 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,8 +214,8 @@ void Server::runServer()
 
         for (size_t i = 0; i < this->_pollfds.size(); i++)                  // Itera a través de todos los elementos del vector de pollfds
         {                                                                   // Esperar 1 ms, para no consumir muchos recursos del sistema
-            if (this->_pollfds[i].revents & POLLIN)                         // Si el fd tiene la flag POLLIN activada, significa que hay datos listos para ser leidos
-            {
+            if (this->_pollfds[i].revents & POLLIN)                         // Si el resultado de la operacion & es verdadero(1), 0x01 = 0x01, POLLIN = POLLIN la condicion es verdadera
+            {                                                               // POLLIN es una mascara de bits que indica que hay datos para leer y la operacion &
                 if (this->_pollfds[i].fd == this->_serverFd)                // Comprueba si el socket con eventos es el socket del servidor, lo que indica que un nuevo cliente está intentando conectarse
                     this->newClientConnection();                            // Si es el socket del servidor, llama a la función para aceptar nuevas conexiones de clientes
                 else
