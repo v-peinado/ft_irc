@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 14:10:20 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/16 14:23:30 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,6 +446,9 @@ void Server::printInfo()
         std::cout << "Admins: " << std::endl;
         for (size_t i = 0; i < it->second->GetAdmins().size(); i++)
             std::cout << "[" << i << "]Admin: " << it->second->GetAdmins()[i]->getNickname() << std::endl;
+        std::cout << "Invited: " << std::endl;
+        for (size_t i = 0; i < it->second->GetInvitedClients().size(); i++)
+            std::cout << "[" << i << "]Invited: " << it->second->GetInvitedClients()[i] << std::endl;
     }
     //printar lista de usuarios y sus canales    
 }
