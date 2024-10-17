@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 13:01:35 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/15 13:31:30 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 00:16:06 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@ Invite::~Invite()
 
 int Invite::validArgs(std::vector<std::string> args, int fdClient)
 {
+    if (this->_server.getUserByFd(fdClient)->getNickname() == "" 
+        || this->_server.getUserByFd(fdClient)->getUsername() == "" 
+        || this->_server.getUserByFd(fdClient)->getRealname() == "")
+    {
+        std::string channelName = ""; 
+        std::string nickName = "";
+        this->_server.sendError(451, nickName, channelName, fdClient, " :You have not registered\r\n");
+        return 0;
+    }
     std::string channelName = "";
     if (args.size() < 3)
     {
@@ -48,6 +57,8 @@ int Invite::validArgs(std::vector<std::string> args, int fdClient)
 
 void Invite::run(std::vector<std::string> args, int fdClient)
 {
+    if (this->validArgs(args, fdClient) == 0)
+        return;  // Validar los argumentos
     std::string channelName = args[2];                       // Nombre del canal
     std::string nickname = args[1];                           // Nickname del usuario a invitar
     Channel *channel = this->_server.getChannelByName(channelName); // Buscar el canal por nombre

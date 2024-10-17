@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 16:10:52 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 01:12:02 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ class Server
         /*** SEND ***/
 
         void sendError(int code, std::string clientname, std::string channelname, int fd, std::string msg);
+        void sendError(int code, std::string clientname, int fd, std::string msg);
         void sendResponse(std::string response, int fd);
                                   
 };

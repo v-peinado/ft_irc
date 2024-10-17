@@ -20,7 +20,15 @@ Mode::~Mode()
 
 int Mode::validArgs(std::vector<std::string> args, int fdClient)
 {
-    
+    if (this->_server.getUserByFd(fdClient)->getNickname() == "" 
+        || this->_server.getUserByFd(fdClient)->getUsername() == "" 
+        || this->_server.getUserByFd(fdClient)->getRealname() == "")
+    {
+        std::string channelName = ""; 
+        std::string nickName = "";
+        this->_server.sendError(451, nickName, channelName, fdClient, " :You have not registered\r\n");
+        return 0;
+    }
     std::string channelName = "";
 	if (args.size() < 2)
 	{

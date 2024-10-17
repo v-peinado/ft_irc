@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/06 19:49:03 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 00:18:19 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@ Privmsg::~Privmsg()
 
 int Privmsg::validArgs(std::vector<std::string> args, int fdClient)
 {
+    if (this->_server.getUserByFd(fdClient)->getNickname() == "" 
+        || this->_server.getUserByFd(fdClient)->getUsername() == "" 
+        || this->_server.getUserByFd(fdClient)->getRealname() == "")
+    {
+        std::string channelName = ""; 
+        std::string nickName = "";
+        this->_server.sendError(451, nickName, channelName, fdClient, " :You have not registered\r\n");
+        return 0;
+    }
     std::string channelName = "";
     if (args.size() < 3)
     {

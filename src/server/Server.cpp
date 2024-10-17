@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 16:01:13 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 01:12:09 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void Server::printServerInfo()
     std::cout << "╠════════════════════════════════════════════════════════╣" << std::endl;
     std::cout << "║                🚀 Server is up and running!            ║" << std::endl;
     std::cout << "╚════════════════════════════════════════════════════════╝" << std::endl;
-    }
+}
 void Server::startServer()
 {   
     setSocket();                  // Crear el socket
@@ -311,8 +311,8 @@ void Server::reciveNewData(int fd)
                 this->parseCommand(data[i], client->getClientFd());                 // Parsear los comando
             }
             if (this->getUserByFd(fd))                                              // Limpiar el buffer del cliente, si este sigue conectado
-            {
-                this->getUserByFd(fd)->getBuffer().clear();                                           
+            {    
+                this->getUserByFd(fd)->getBuffer().clear();                         // solo lo limpiamos porque seguiremos interactuando con el cliente                                                          
             }
         }
         else
@@ -597,6 +597,15 @@ void Server::sendError(int code, std::string clientname, std::string channelname
 	std::string resp = ss.str();
 	if(send(fd, resp.c_str(), resp.size(),0) == -1)
 		std::cerr << "Error send() fail" << std::endl;
+}
+
+void Server::sendError(int code, std::string clientname, int fd, std::string msg)
+{
+	std::stringstream ss;
+	ss << ":" << this->_serverHost << " " << code << " " << clientname << msg;
+	std::string resp = ss.str();
+	if(send(fd, resp.c_str(), resp.size(),0) == -1)
+		std::cerr << "send() faild" << std::endl;
 }
 
 void Server::sendResponse(std::string response, int fd)
