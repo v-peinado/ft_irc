@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 14:17:17 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 13:00:10 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:37:07 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int Topic::validArgs(std::vector<std::string> args, int fdClient)
         this->_server.sendError(442, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :You're not on that channel\r\n");
         return 0;
     }
-    if (args.size() == 3)
+    if (args.size() >= 3)
     {
         if(args[2][0] != ':')
         {

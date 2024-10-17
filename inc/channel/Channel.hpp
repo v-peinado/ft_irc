@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:48:40 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/10/16 13:56:45 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/17 12:07:30 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,7 @@ class Channel
         bool isClientInvited(int fd);
         bool isClientAdmin(int fd);
         bool isClientInChannel(int fd);        
-        void sendToAll(std::string rply);
-        
+        void sendToAll(std::string rply);      
 };
 
 #endif

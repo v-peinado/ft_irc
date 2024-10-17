@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 23:42:10 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/17 11:06:52 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,10 @@ void Kick::run(std::vector<std::string> args, int fdClient)
     std::string channelName = args[1];                      // Nombre del canal
     std::string nicknameList = args[2];                     // Lista de nicknames a expulsar (posiblemente múltiples, separados por comas)
     std::string reason = args.size() == 4 ? args[3] : "";   // Razón de la expulsión (si existe)
-    
-
+    reason = reason[0] == ':' ? reason : ":" + reason;
     // Si hay más de una palabra en la razón, se concatenan
     for(size_t i = 3; i < args.size(); i++) 
-    {
-        if (i == 3)
-            reason = args[i];
-        else
-            reason += " " + args[i];
-    }
-    i
+        reason += " " + args[i];
 
     // Validar si existe el canal
     if (!this->_server.getChannelByName(channelName)) 
