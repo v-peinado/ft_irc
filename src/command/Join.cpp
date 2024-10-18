@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 13:57:46 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 12:08:44 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:56:53 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ void Join::run(std::vector<std::string> args, int fdClient)
             // Verificar si el usuario ya está en el canal
             if (it->second->GetClient(fdClient) != NULL)
             {
+                std::cout << this->_server.getUserByFd(fdClient)->getNickname() << " is already on channel " << channelName << std::endl;
                 //this->_server.sendError(443, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :is already on channel\r\n");
                 return;
             }

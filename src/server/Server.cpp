@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 15:44:26 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:14:01 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,8 +380,11 @@ void Server::deleteFromAllChannels(int fd)
             it->second->removeClient(fd);
         if (it->second->isClientAdmin(fd))
             it->second->removeAdmin(fd);
+        if (it->second->isClientInvited(fd))
+            it->second->removeInvitedClient(fd);
         it++;
     }
+    
 }
 
 bool Server::ifClientExist(std::string nick)

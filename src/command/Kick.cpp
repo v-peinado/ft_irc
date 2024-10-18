@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 00:15:09 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 17:37:51 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ int Kick::validArgs(std::vector<std::string> args, int fdClient)
         this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
         return 0;
     }
+    if (args.size() >= 4 && args[3][0] != ':')
+    {
+        this->_server.sendError(461, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :Not enough parameters\r\n");
+        return 0;
+    }
     return 1;
 }
 
@@ -79,10 +84,9 @@ void Kick::run(std::vector<std::string> args, int fdClient)
 
     std::string channelName = args[1];                      // Nombre del canal
     std::string nicknameList = args[2];                     // Lista de nicknames a expulsar (posiblemente múltiples, separados por comas)
-    std::string reason = args.size() == 4 ? args[3] : "";   // Razón de la expulsión (si existe)
-    reason = reason[0] == ':' ? reason : ":" + reason;
+    std::string reason = args.size() >= 4 ? args[3] : "";   // Razón de la expulsión (si existe)
     // Si hay más de una palabra en la razón, se concatenan
-    for(size_t i = 3; i < args.size(); i++) 
+    for(size_t i = 4; i < args.size(); i++) 
         reason += " " + args[i];
 
     // Validar si existe el canal
@@ -123,13 +127,21 @@ void Kick::run(std::vector<std::string> args, int fdClient)
             continue;
         }
 
-        // Preparar el mensaje de KICK para todos los usuarios en el canal
-        std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
+        // Preparar el mensaje de KICK para todos los usuarios en el canal y enviarlo
+        if (reason.empty())
+        {
+            std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
                               "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
-                              " KICK " + channelName + " " + nickname + reason + "\r\n";
-
-        // Enviar el mensaje a todos los usuarios en el canal
-        this->_server.getChannelByName(channelName)->sendToAll(kickMsg);
+                              " KICK " + channelName + " " + nickname + "\r\n";
+            this->_server.getChannelByName(channelName)->sendToAll(kickMsg);
+        } 
+        else
+        {
+            std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
+                              "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
+                              " KICK " + channelName + " " + nickname + " " + reason + "\r\n";
+            this->_server.getChannelByName(channelName)->sendToAll(kickMsg);
+        }
 
         // Expulsar al usuario del canal
         this->_server.getChannelByName(channelName)->removeClient(targetClientFd);
@@ -140,3 +152,4 @@ void Kick::run(std::vector<std::string> args, int fdClient)
         }
     }
 }
+
