@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 00:18:19 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 12:08:44 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ int Privmsg::validArgs(std::vector<std::string> args, int fdClient)
     std::string channelName = "";
     if (args.size() < 3)
     {
-        this->_server.sendError(411, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, ":No recipient given\r\n");
+        this->_server.sendError(411, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No recipient given\r\n");
         return 0;
     }
     if (args[2] == "")
     {
-        this->_server.sendError(412, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, ":No text to send\r\n");
+        this->_server.sendError(412, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No text to send\r\n");
         return 0;
     }
     return 1;
@@ -106,14 +106,14 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
             // Comprobar si el usuario está en el canal
             if (!userInChannel(channel, user))
             {
-                this->_server.sendError(404, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, ":Cannot send to channel\r\n");
+                this->_server.sendError(404, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, " :Cannot send to channel\r\n");
                 return;
             }
 
             // Verificar si el canal existe
             if (channel == NULL)
             {
-                this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, ":No such nick/channel\r\n");
+                this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, " :No such nick/channel\r\n");
                 return;
             }
 
