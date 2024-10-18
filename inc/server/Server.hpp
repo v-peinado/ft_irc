@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 01:12:02 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:24:21 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,12 @@ class Server
         void deleteFromClientList(int fd);
         void deleteClientPollFd(int fd);
         void deleteFromAllChannels(int fd);
-
+        bool ifClientExist(std::string nick);
         /*** CHANNELS ***/
         
         Channel *getChannelByName(std::string channelName);     //nueva
         std::map<std::string, Channel *> &getChannels();       //nueva
+        bool channelExist(std::string channelName);            //nueva
         
         /*** COMMANDS ***/
         

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 01:12:09 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:44:26 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,7 +372,26 @@ void Server::deleteClientPollFd(int fd)
 
 void Server::deleteFromAllChannels(int fd)
 {
-    (void)fd;
+    std::map<std::string, Channel *> canales = this->getChannels();
+    std::map<std::string, Channel *>::iterator it = canales.begin();
+    while (it != canales.end())
+    {
+        if (it->second->isClientInChannel(fd))
+            it->second->removeClient(fd);
+        if (it->second->isClientAdmin(fd))
+            it->second->removeAdmin(fd);
+        it++;
+    }
+}
+
+bool Server::ifClientExist(std::string nick)
+{
+    for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+    {
+        if (it->second->getNickname() == nick)
+            return true;
+    }
+    return false;
 }
 
 /******************************************************************************
@@ -583,6 +602,15 @@ Channel *Server::getChannelByName(std::string channelName)
         return it->second;
     else
         return NULL;
+}
+
+bool Server::channelExist(std::string channelName)
+{
+    std::map<std::string, Channel *>::iterator it = this->_channels.find(channelName);
+    if (it != this->_channels.end())
+        return true;
+    else
+        return false;
 }
 
 /******************************************************************************
