@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 15:27:54 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 17:59:56 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int Privmsg::validArgs(std::vector<std::string> args, int fdClient)
         this->_server.sendError(411, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No recipient given\r\n");
         return 0;
     }
-    if (args[2] == "")
+    if (args[2] == "" || args[2][0] != ':')
     {
         this->_server.sendError(412, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No text to send\r\n");
         return 0;
@@ -131,7 +131,8 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
                     continue;  
 
                 // Preparar el mensaje
-                std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
+                std::string rply = ":" + this->_server.getUserByFd(fdClient)->getHostName() + "@" + this->_server.getUserByFd(fdClient)->getClientIp()
+                                + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
 
                 // Enviar el mensaje
                 send(recipient->getClientFd(), rply.c_str(), rply.size(), 0);
@@ -145,7 +146,8 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
                 std::string user = this->_server.getUserByFd(fdClient)->getNickname();
 
                 // Preparar el mensaje
-                std::string rply = ":" + this->_server.getUserByFd(fdClient)->getNickname() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
+                std::string rply = ":" + this->_server.getUserByFd(fdClient)->getHostName() 
+                        + "@" + this->_server.getUserByFd(fdClient)->getClientIp() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
 
                 // Enviar el mensaje
                 send(recipient->getClientFd(), rply.c_str(), rply.size(), 0);
