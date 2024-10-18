@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 12:08:44 by vpeinado         ###   ########.fr       */
+/*   Updated: 2024/10/18 12:30:07 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
                 }
                 else
                 {
-                    this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, ":No such nick/channel\r\n");
+                    this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, " :No such nick/channel\r\n");
                     return;
                 }
             }
