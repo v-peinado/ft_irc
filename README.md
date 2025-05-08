@@ -64,22 +64,24 @@ USER <username> 0 * :<realname>
 
 ## Supported Commands
 
-The server implements the following IRC commands:
+The server implements the following IRC commands. Commands can be used with either the slash prefix (client-side format) or directly in uppercase (protocol format):
 
-| Command   | Description                                           | Usage                                    |
-|-----------|-------------------------------------------------------|-----------------------------------------|
-| PASS      | Set the connection password                           | `/PASS password`                        |
-| NICK      | Set or change your nickname                           | `/NICK nickname`                        |
-| USER      | Set your username and real name                       | `/USER username 0 * :Real Name`         |
-| QUIT      | Disconnect from the server                            | `/QUIT [message]`                       |
-| JOIN      | Join a channel                                        | `/JOIN #channelname [key]`              |
-| KICK      | Remove a user from a channel                          | `/KICK #channel nickname [reason]`      |
-| TOPIC     | View or change a channel's topic                      | `/TOPIC #channel [new topic]`           |
-| MODE      | Change channel or user modes                          | `/MODE #channel +/-flag [parameters]`   |
-| PRIVMSG   | Send a message to a user or channel                   | `/PRIVMSG target :message`              |
-| INVITE    | Invite a user to a channel                            | `/INVITE nickname #channel`             |
-| INFO      | Display server information                            | `/INFO`                                 |
-| PING      | Check server connection                               | `/PING [server]`                        |
+| Command   | Description                                   | Client Usage                | Protocol Usage                |
+|-----------|-----------------------------------------------|-----------------------------|-----------------------------|
+| PASS      | Set the connection password                   | `/pass password`            | `PASS password`             |
+| NICK      | Set or change your nickname                   | `/nick nickname`            | `NICK nickname`             |
+| USER      | Set your username and real name               | `/user username 0 * :Real Name` | `USER username 0 * :Real Name` |
+| QUIT      | Disconnect from the server                    | `/quit [message]`           | `QUIT [message]`            |
+| JOIN      | Join a channel                                | `/join #channelname [key]`  | `JOIN #channelname [key]`   |
+| KICK      | Remove a user from a channel                  | `/kick #channel nickname [reason]` | `KICK #channel nickname [reason]` |
+| TOPIC     | View or change a channel's topic              | `/topic #channel [new topic]` | `TOPIC #channel [new topic]` |
+| MODE      | Change channel or user modes                  | `/mode #channel +/-flag [parameters]` | `MODE #channel +/-flag [parameters]` |
+| PRIVMSG   | Send a message to a user or channel           | `/privmsg target :message`  | `PRIVMSG target :message`   |
+| INVITE    | Invite a user to a channel                    | `/invite nickname #channel` | `INVITE nickname #channel`  |
+| INFO      | Display server information                    | `/info`                     | `INFO`                      |
+| PING      | Check server connection                       | `/ping [server]`            | `PING [server]`             |
+
+Note: When using IRC clients like irssi, you typically use the slash commands. When using netcat or implementing your own client, you use the protocol format (uppercase without slash).
 
 ## Technical Implementation
 
