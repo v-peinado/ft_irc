@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 14:17:14 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 12:09:20 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:01:04 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Topic : public ACommand
 {
     private:
 
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED) ***/
         
         Topic(const Topic &src);
         Topic &operator=(const Topic &src);

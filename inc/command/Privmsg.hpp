@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:01:02 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/03 22:04:27 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:00:58 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Privmsg : public ACommand
 {
     private:
 
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED) ***/
         
         Privmsg(const Privmsg &src);
         Privmsg &operator=(const Privmsg &src);

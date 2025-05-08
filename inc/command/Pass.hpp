@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 19:13:05 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/22 17:05:45 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:59:21 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Pass : public ACommand
 {
     private:
         
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED) ***/
         
         Pass(const Pass &src);
         Pass &operator=(const Pass &src);

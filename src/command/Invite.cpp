@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 13:01:35 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 12:08:44 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 22:23:23 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,46 +58,46 @@ int Invite::validArgs(std::vector<std::string> args, int fdClient)
 void Invite::run(std::vector<std::string> args, int fdClient)
 {
     if (this->validArgs(args, fdClient) == 0)
-        return;  // Validar los argumentos
-    std::string channelName = args[2];                       // Nombre del canal
-    std::string nickname = args[1];                           // Nickname del usuario a invitar
-    Channel *channel = this->_server.getChannelByName(channelName); // Buscar el canal por nombre
-    if (channel == NULL)                                     // Si el canal no existe
+        return;
+    std::string channelName = args[2];                              // Channel name
+    std::string nickname = args[1];                           // Nickname of the user to invite
+    Channel *channel = this->_server.getChannelByName(channelName); // Search for the channel by name
+    if (channel == NULL)                                     // If the channel doesn't exist
     {
         this->_server.sendError(403, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such channel\r\n");
         return;
     }
-    Client *client = this->_server.getUserByFd(fdClient);    // Buscar el usuario por fd
-    if (client == NULL)                                      // Si el usuario no existe
+    Client *client = this->_server.getUserByFd(fdClient);    // Search for the user by fd
+    if (client == NULL)                                      // If the user doesn't exist
     {
         this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such nick/channel\r\n");
         return;
     }
-    if (channel->GetAdmin(client->getClientFd()) == NULL)     // Si el usuario no es admin del canal
+    if (channel->GetAdmin(client->getClientFd()) == NULL)     // If the user is not an admin of the channel
     {
         this->_server.sendError(482, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :You're not channel operator\r\n");
         return;
     }
-    Client *invitedClient = this->_server.getUserByNick(nickname); // Buscar el usuario por nickname
-    if (invitedClient == NULL)                                  // Si el usuario no existe
+    Client *invitedClient = this->_server.getUserByNick(nickname); // Search for the user by nickname
+    if (invitedClient == NULL)                                  // If the user doesn't exist
     {
         this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such nick/channel\r\n");
         return;
     }
-    if (channel->isClientInChannel(invitedClient->getClientFd())) // Si el usuario ya esta en el canal
+    if (channel->isClientInChannel(invitedClient->getClientFd())) // If the user is already in the channel
     {
         this->_server.sendError(443, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :is already on channel\r\n");
         return;
     }
-    if (channel->isClientInvited(invitedClient->getClientFd())) // Si el usuario ya ha sido invitado
+    if (channel->isClientInvited(invitedClient->getClientFd())) // If the user has already been invited
     {
         this->_server.sendError(443, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :is already on channel\r\n");
         return;
     }
-    channel->addInvitedClients(invitedClient->getClientFd()); // Añadir el usuario al canal
+    channel->addInvitedClients(invitedClient->getClientFd()); // Add the user to the channel
     std::string inviteMsg = ": 341 " + this->_server.getUserByFd(fdClient)->getNickname() + " " + invitedClient->getNickname() + " " + channelName + "\r\n";
-    send(fdClient, inviteMsg.c_str(), inviteMsg.size(), 0); // Enviar mensaje de exito
+    send(fdClient, inviteMsg.c_str(), inviteMsg.size(), 0); // Send success message
     std::string invite = ":" + invitedClient->getHostName() + 
                             " INVITE " + invitedClient->getNickname() + " " + channelName + "\r\n";
-    send(invitedClient->getClientFd(), invite.c_str(), invite.size(), 0); // Enviar mensaje al usuario invitado
+    send(invitedClient->getClientFd(), invite.c_str(), invite.size(), 0); // Send message to the invited user
 }

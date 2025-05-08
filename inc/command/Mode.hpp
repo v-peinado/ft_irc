@@ -7,13 +7,21 @@
 class Mode : public ACommand
 {
     private:
-        //Forma canonica no implementada
+
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED)***/
+
         Mode(const Mode &src);
         Mode &operator=(const Mode &src);
         Mode();
     public:
+
+        /*** Orthodox Canonical Form ***/
+
         Mode(Server &server);
         ~Mode();
+        
+        /*** MEMBER FUNCTIONS ***/
+
         int validArgs(std::vector<std::string> args, int fdClient);
         void run(std::vector<std::string> args, int fdClient);
         void changeLimit(Channel *channel, char oper, std::vector<std::string> args, size_t *offset, int fdClient);

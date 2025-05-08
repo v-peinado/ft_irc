@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 12:21:04 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 15:24:21 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:02:27 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Server
 {
     private:
     
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED)***/
         
         Server();
         Server(const Server &src);

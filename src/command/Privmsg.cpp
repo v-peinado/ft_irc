@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:00:50 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 17:59:56 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 22:30:23 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
     if (this->validArgs(args, fdClient) == 0)
         return;
 
-    // Separa los destinatarios y el mensaje
+    // Separate recipients and message
     std::vector<std::string> msgTargets = splitTarget(args[1]);
     std::string message = args[2];
     for (size_t i = 3; i < args.size(); i++)
@@ -102,54 +102,54 @@ void Privmsg::run(std::vector<std::string> args, int fdClient)
 
     for (size_t i = 0; i < msgTargets.size(); i++)
     {
-        if (msgTargets[i][0] == '#') // Si el destino es un canal
+        if (msgTargets[i][0] == '#') // If the target is a channel
         {
             Channel *channel = channels[msgTargets[i]];
             std::string user = this->_server.getUserByFd(fdClient)->getNickname();
 
-            // Verificar si el canal existe
+            // Check if the channel exists
             if (this->_server.channelExist(msgTargets[i]) == false)
             {
                 this->_server.sendError(401, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, " :No such nick/channel\r\n");
                 return;
             }
             
-            // Comprobar si el usuario está en el canal
+            // Check if the user is in the channel
             if (!userInChannel(channel, user))
             {
                 this->_server.sendError(404, this->_server.getUserByFd(fdClient)->getNickname(), msgTargets[i], fdClient, " :Cannot send to channel\r\n");
                 return;
             }
 
-            // Enviar mensaje a todos los clientes en el canal
+            // Send message to all clients in the channel
             for (size_t j = 0; j < channel->GetClients().size(); j++)
             {
                 Client *recipient = channel->GetClients()[j];
 
-                // No enviar al remitente
+                // Don't send to the sender
                 if (recipient->getNickname() == user)
                     continue;  
 
-                // Preparar el mensaje
+                // Prepare the message
                 std::string rply = ":" + this->_server.getUserByFd(fdClient)->getHostName() + "@" + this->_server.getUserByFd(fdClient)->getClientIp()
                                 + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
 
-                // Enviar el mensaje
+                // Send the message
                 send(recipient->getClientFd(), rply.c_str(), rply.size(), 0);
             }
         }
-        else // Si el destino es un usuario
+        else // If the target is a user
         {
             if (this->_server.ifClientExist(msgTargets[i]))
             {
                 Client *recipient = this->_server.getUserByNick(msgTargets[i]);
                 std::string user = this->_server.getUserByFd(fdClient)->getNickname();
 
-                // Preparar el mensaje
+                // Prepare the message
                 std::string rply = ":" + this->_server.getUserByFd(fdClient)->getHostName() 
                         + "@" + this->_server.getUserByFd(fdClient)->getClientIp() + " PRIVMSG " + msgTargets[i] + " " + message + "\r\n";
 
-                // Enviar el mensaje
+                // Send the message
                 send(recipient->getClientFd(), rply.c_str(), rply.size(), 0);
             }
             else

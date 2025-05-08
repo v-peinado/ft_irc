@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 16:27:27 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/16 14:03:01 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:53:22 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Client
 
         /*** CHANNELS ***/
 
-        std::vector<std::string> _channels;          //nueva
+        std::vector<std::string> _channels;          
 
     public:
     
@@ -90,7 +90,7 @@ class Client
 
         /*** CHANNELS ***/
 
-        std::vector<std::string> getChannels();                     //nueva
+        std::vector<std::string> getChannels();                     
               
 };
 

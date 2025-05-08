@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:27:36 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/09/30 13:28:28 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:55:49 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Kick : public ACommand
 {
     private:
 
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED)***/
         
         Kick(const Kick &src);
         Kick &operator=(const Kick &src);

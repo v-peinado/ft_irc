@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 13:01:42 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/01 13:02:23 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:55:19 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Invite : public ACommand
 {
     private:
 
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED)***/
         
         Invite(const Invite &src);
         Invite &operator=(const Invite &src);

@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:48:40 by ffons-ti          #+#    #+#             */
-/*   Updated: 2024/10/17 12:07:30 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:54:51 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include "Client.hpp"
 
 class Client;
@@ -35,12 +34,16 @@ class Channel
         std::vector<Client *> clients;
 	    std::vector<Client *> admins;
     public:
+    
+        /*** Orthodox Canonical Form ***/
+        
         Channel();
         ~Channel();
         Channel(Channel const &src);
         Channel &operator=(Channel const &src);
         
-        // Getters
+        /*** GETTERS ***/
+        
         int GetHasKey();
         int GetInviteOnly();
         size_t GetLimit();
@@ -57,7 +60,8 @@ class Channel
         std::vector<Client *> GetAdmins();
         std::vector<int> GetInvitedClients();
         
-        // Setters
+        /*** SETTERS ***/
+        
         void SetInvitOnly(int invit_only);
 	    void SetHasKey(int key);
 	    void SetLimit(int limt);
@@ -66,7 +70,8 @@ class Channel
 	    void SetKey(std::string password);
 	    void SetName(std::string nam);
 
-        // Methods
+        /*** Methods ***/
+        
         void addClient(Client *newClient);
         void addInvitedClients(int fd);
         void addAdmin(Client *newClient);

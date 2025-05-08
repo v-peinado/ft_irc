@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:53:24 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 16:14:01 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 22:17:12 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,12 @@ void Server::setPollfds(pollfd pollfd)
         throw std::runtime_error("Error: max clients reached");
         return;
     }
-    if (pollfd.fd < 3)                                                    // 0, 1, 2 son los fd reservados
+    if (pollfd.fd < 3)                                                    // 0, 1, 2 : reserved file descriptors
     {
         throw std::runtime_error("Error: invalid fd");
         return;
     }
-    this->_pollfds.push_back(pollfd);                                     // Añadir el pollfd al vector de pollfds
+    this->_pollfds.push_back(pollfd);                                     // Add the pollfd to the vector of pollfds
 }
 
 void Server::setWelcomeMessage()
@@ -128,20 +128,20 @@ void Server::printServerInfo()
 }
 void Server::startServer()
 {   
-    setSocket();                  // Crear el socket
+    setSocket();                  // Create the socket
 
-    configServerAddr();           // Configurar la direccion del servidor
+    configServerAddr();           // Configure the server address
     
-    setSocketOptions();           // Opcion 1: Reusar la direccion del servidor
+    setSocketOptions();           // Option 1: Reuse the server address
 
-    bindSockets();                // Vincular el socket al puerto dado
+    bindSockets();                // Bind the socket to the given port
 
-    listenAndPoll();              // Escuchar y monitorear los eventos de los sockets
+    listenAndPoll();              // Listen and monitor socket events
 }
 
 void Server::setSocket()
 {
-    this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);           // Crear el socket, AF_INET = IPv4, SOCK_STREAM = TCP, 0 = Protocolo por defecto
+    this->_serverFd = socket(AF_INET, SOCK_STREAM, 0);           // Create the socket, AF_INET = IPv4, SOCK_STREAM = TCP, 0 = Default protocol
     if (this->_serverFd < 0)
     {
         throw std::runtime_error("Error: socket failed");
@@ -149,25 +149,25 @@ void Server::setSocket()
     }
 }
 
-void Server::configServerAddr()                                      // sockaddr_in, se utiliza para definir una dirección de socket IPv4, incluyendo el puerto y la dirección IP.
+void Server::configServerAddr()                                      // sockaddr_in, used to define an IPv4 socket address, including the port and IP address
 {                                    
-    std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));   // Limpiar la estructura de la direccion del servidor
-    this->_serverAddr.sin_family = AF_INET;                          // Familia de direcciones, AF_INET = IPv4
-    this->_serverAddr.sin_addr.s_addr = INADDR_ANY;                  // Recibir conexiones de cualquier direccion IP, 0.0.0.0               
-    this->_serverAddr.sin_port = htons(this->_port);                 // Puerto del servidor, htons() convierte el entero corto sin signo del host al formato de red
-    this->_serverHost = "127.0.0.1";                                 // Direccion IP del servidor, localhost
+    std::memset(&this->_serverAddr, 0, sizeof(this->_serverAddr));   // Clear the server address structure
+    this->_serverAddr.sin_family = AF_INET;                          // Address family, AF_INET = IPv4
+    this->_serverAddr.sin_addr.s_addr = INADDR_ANY;                  // Accept connections from any IP address, 0.0.0.0              
+    this->_serverAddr.sin_port = htons(this->_port);                 // Server port, htons() converts the unsigned short integer from host to network byte order
+    this->_serverHost = "127.0.0.1";                                 // Server IP address, localhost
 }
 
 void Server::setSocketOptions()
 {
-    int opt = 1;                                                                           // Opcion para reusar la direccion del servidor
-    if(setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)       // SOL_SOCKET = Nivel de socket, SO_REUSEADDR = Reusar la direccion del servidor 
+    int opt = 1;                                                                           // Option to reuse the server address
+    if(setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)       // SOL_SOCKET = Socket level, SO_REUSEADDR = Reuse server address
     {
         throw std::runtime_error("Error: setsockopt");
         close(this->_serverFd);
         exit(1);
     }
-    if(fcntl(this->_serverFd, F_SETFL, O_NONBLOCK) < 0)                                     // Configura fd para ser no bloqueante, no esperarán a que se complete la operación si no hay datos disponibles
+    if(fcntl(this->_serverFd, F_SETFL, O_NONBLOCK) < 0)                                     // Set fd to be non-blocking, they won't wait for the operation to complete if no data is available
     {
         throw std::runtime_error("Error: fcntl");
         close(this->_serverFd);
@@ -177,7 +177,7 @@ void Server::setSocketOptions()
 
 void Server::bindSockets()
 {
-    if(bind(this->_serverFd, (struct sockaddr *)&this->_serverAddr, sizeof(this->_serverAddr)) < 0)     // Vincular el socket al puerto dado
+    if(bind(this->_serverFd, (struct sockaddr *)&this->_serverAddr, sizeof(this->_serverAddr)) < 0)     // Bind the socket to the given port
     {
         throw std::runtime_error("Error: bind");
         close(this->_serverFd);
@@ -187,39 +187,39 @@ void Server::bindSockets()
 
 void Server::listenAndPoll()
 {
-    if(listen(this->_serverFd, MAX_CLIENTS) < 0)        // Escuchar las conexiones entrantes, es decir, esperar a que los clientes se conecten    
+    if(listen(this->_serverFd, MAX_CLIENTS) < 0)        // Listen for incoming connections, that is, wait for clients to connect    
     {
         throw std::runtime_error("Error: listen");
         close(this->_serverFd);
         exit(1);
     }
-    pollfd serverPollFd;                               // Estructura pollfd, monitorear los eventos de los sockets
-    serverPollFd.fd = this->_serverFd;                 // File descriptor del servidor
-    serverPollFd.events = POLLIN;                      // Eventos a monitorear, POLLIN = Datos listos para leer
-    serverPollFd.revents = 0;                          // Eventos que ocurrieron, inicializado a 0
-    this->setPollfds(serverPollFd);                    // Añadir el pollfd del servidor al vector de pollfds que contiene los clientes a monitorear
+    pollfd serverPollFd;                               // pollfd structure, monitor socket events
+    serverPollFd.fd = this->_serverFd;                 // Server file descriptor
+    serverPollFd.events = POLLIN;                      // Events to monitor, POLLIN = Data ready to read
+    serverPollFd.revents = 0;                          // Events that occurred, initialized to 0
+    this->setPollfds(serverPollFd);                    // Add the server pollfd to the vector of pollfds that contains the clients to monitor
 }
 
 void Server::runServer()
 {
-    while(Server::_active)                                                  // Bucle principal del servidor, se ejecuta mientras el servidor este activo
+    while(Server::_active)                                                  // Main server loop, runs while the server is active
     {                                                                      
         if ((poll(this->_pollfds.data(), this->_pollfds.size(), -1) < 0) 
-            && Server::_active)                                             // poll() monitorea los eventos de los sockets, -1 = Esperar indefinidamente, se llama en cada iteracion del bucle
-        {                                                                   // monitoreando los cambios en los descriptores de archivo cada iteracion
+            && Server::_active)                                             // poll() monitors socket events, -1 = Wait indefinitely, called on each loop iteration
+        {                                                                   // monitoring changes in file descriptors on each iteration
             throw std::runtime_error("Error: poll");
             close(this->_serverFd);
             exit(1);
         }
 
-        for (size_t i = 0; i < this->_pollfds.size(); i++)                  // Itera a través de todos los elementos del vector de pollfds
-        {                                                                   // Esperar 1 ms, para no consumir muchos recursos del sistema
-            if (this->_pollfds[i].revents & POLLIN)                         // Si el resultado de la operacion & es verdadero(1), 0x01 = 0x01, POLLIN = POLLIN la condicion es verdadera
-            {                                                               // POLLIN es una mascara de bits que indica que hay datos para leer y la operacion &
-                if (this->_pollfds[i].fd == this->_serverFd)                // Comprueba si el socket con eventos es el socket del servidor, lo que indica que un nuevo cliente está intentando conectarse
-                    this->newClientConnection();                            // Si es el socket del servidor, llama a la función para aceptar nuevas conexiones de clientes
+        for (size_t i = 0; i < this->_pollfds.size(); i++)                  // Iterate through all elements in the vector of pollfds
+        {                                                                   // Wait 1 ms, to avoid consuming too many system resources
+            if (this->_pollfds[i].revents & POLLIN)                         // If the result of the & operation is true(1), 0x01 = 0x01, POLLIN = POLLIN the condition is true
+            {                                                               // POLLIN is a bitmask that indicates there is data to read and the & operation
+                if (this->_pollfds[i].fd == this->_serverFd)                // Check if the socket with events is the server socket, indicating that a new client is trying to connect
+                    this->newClientConnection();                            // If it's the server socket, call the function to accept new client connections
                 else
-                    this->reciveNewData(this->_pollfds[i].fd);              // Si el socket activo no es el  servidor, significa que se reciben datos de un cliente ya conectado
+                    this->reciveNewData(this->_pollfds[i].fd);              // If the active socket is not the server, it means data is being received from an already connected client
             }
         }
     }
@@ -228,8 +228,7 @@ void Server::runServer()
 
 void Server::stopServer()
 {      
-
-    // cerrar los socketa de los clientes y liberar la memoria
+    // close client sockets and free memory
     for (std::map<int, Client *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
     {
         send(it->first, "Server is shutting down\r\n", 26, 0);
@@ -249,94 +248,94 @@ void Server::stopServer()
 * ------------------------------- CLIENTS ----------------------------------- *
 ******************************************************************************/
 
-void Server::newClientConnection()                                                                              // Aceptar nuevas conexiones de clientes
+void Server::newClientConnection()                                                                              
 {
-    Client *newClient = new Client();                                                                           // Crear un nuevo cliente
-    memset(&newClient->getClientAddr(), 0, sizeof(newClient->getClientAddr()));                                 // Limpiar la estructura de la direccion del cliente
-    socklen_t addrLen = sizeof(newClient->getClientAddr());                                                     // Longitud de la direccion del cliente
+    Client *newClient = new Client();                                                                           // Create a new client
+    memset(&newClient->getClientAddr(), 0, sizeof(newClient->getClientAddr()));                                 // Clear the client address structure
+    socklen_t addrLen = sizeof(newClient->getClientAddr());                                                     // Length of client address
 
-    int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient->getClientAddr(), &addrLen);        // Aceptar la conexion del cliente, devuelve el fd del cliente que se conecta
-    if (newClientFd < 0)                                                                                        // Si el fd es menor que 0, ha habido un error
+    int newClientFd = accept(this->_serverFd, (struct sockaddr *)&newClient->getClientAddr(), &addrLen);        // Accept client connection, returns the fd of the connecting client
+    if (newClientFd < 0)                                                                                        // If the fd is less than 0, there has been an error
     {
         throw std::runtime_error("Error: accept");
-        delete newClient; // Asegurarse de liberar la memoria en caso de error
+        delete newClient; 
         return;
     }
-                                                                                                                // Configurar el nuevo cliente, obtener su direccion IP, fd.. de la lista pollfds
-    newClient->getClientPollFd().fd = newClientFd;                                                              // Establecer el file descriptor del cliente dentro de la estructura pollfd del cliente                                           
-    newClient->getClientPollFd().events = POLLIN;                                                               // POLLIN = Datos listos para ser leídos en el socket del cliente sin bloquear, cuando monitoreamos con poll()
-    newClient->getClientPollFd().revents = 0;                                                                   // Eventos que ocurrieron, inicializado a 0
-    newClient->setClientFd(newClientFd);                                                                        // File descriptor del cliente
-    newClient->setClientIp(inet_ntoa(newClient->getClientAddr().sin_addr));                                     // Direccion IP del cliente, usamos la funcion inet_ntoa para convertir la direccion IP a una cadena
-    newClient->setRegistered(false);                                                                            // El cliente no esta registrado
+                                                                                                                // Configure the new client, get its IP address, fd.. from the pollfds list
+    newClient->getClientPollFd().fd = newClientFd;                                                              // Set the client's file descriptor in the client's pollfd structure                                           
+    newClient->getClientPollFd().events = POLLIN;                                                               // POLLIN = Data ready to be read from the client socket without blocking, when monitoring with poll()
+    newClient->getClientPollFd().revents = 0;                                                                   // Events that occurred, initialized to 0
+    newClient->setClientFd(newClientFd);                                                                        // Client file descriptor
+    newClient->setClientIp(inet_ntoa(newClient->getClientAddr().sin_addr));                                     // Client IP address, we use the inet_ntoa function to convert the IP address to a string
+    newClient->setRegistered(false);                                                                            // The client is not registered
 
-    this->setPollfds(newClient->getClientPollFd());                                                             // Añadir el pollfd del cliente al vector de pollfds que contiene los clientes a monitorear                    
+    this->setPollfds(newClient->getClientPollFd());                                                             // Add the client's pollfd to the vector of pollfds that contains the clients to monitor
 
-    this->_users.insert(std::make_pair(newClientFd, newClient));                                                // Insertar el nuevo cliente en la lista de clientes                
+    this->_users.insert(std::make_pair(newClientFd, newClient));                                                // Insert the new client in the client list               
 
-    std::cout << "New client connected: " << newClient->getClientIp() << std::endl;                             // Imprimir la direccion IP del cliente que se ha conectado, en el server
+    std::cout << "New client connected: " << newClient->getClientIp() << std::endl;                             // Print the IP address of the client that has connected, on the server
 
-    send(newClientFd, this->_welcomeMessage.c_str(), this->_welcomeMessage.size(), 0);                          // Enviar el mensaje de bienvenida al cliente que se ha conectado   
+    send(newClientFd, this->_welcomeMessage.c_str(), this->_welcomeMessage.size(), 0);                          // Send the welcome message to the client that has connected  
 }
 
 void Server::reciveNewData(int fd)
 {
-    std::vector<std::string> data;                                                  // Usaremos el vector para guardar los posibles comandos almacenados en un solo mensaje
-    char buffer[1024];                                                              // Buffer para recibir los datos, es neceseario porque recv no puede recibir un string directamente
-    memset(buffer, 0, 1024);                                                        // Limpiar el buffer
-    Client *client = this->_users[fd];                                              // Representa al cliente que envia los datos, que esta en la lista de usuarios
-    int bytes = recv(fd, buffer, 1024, 0);                                          // Recibir los datos del cliente, devuelve el numero de bytes recibidos  
-    if (bytes < 0)                                                                  // Si recv devuelve un valor negativo, ha habido un error
+    std::vector<std::string> data;                                                  // We will use the vector to store possible commands contained in a single message
+    char buffer[1024];                                                              // Buffer to receive data, needed because recv cannot receive a string directly
+    memset(buffer, 0, 1024);                                                        // Clean buffer
+    Client *client = this->_users[fd];                                              // Represents the client sending the data, which is in the user list
+    int bytes = recv(fd, buffer, 1024, 0);                                          // Receive data from the client, returns the number of bytes received  
+    if (bytes < 0)                                                                  // If recv returns a negative value, there has been an error
     {    
          throw std::runtime_error("Error: recv");
     }
-    else if (bytes == 0)                                                            // Si recv devuelve 0, el cliente se ha desconectado
+    else if (bytes == 0)                                                            // If recv returns 0, the client has disconnected
     {
         std::cout << "Client disconnected, fd: " << fd << std::endl;
         this->deleteClientPollFd(fd);
-        this->deleteFromAllChannels(fd);                                            // Borrar el cliente de la listas, estructuras, etc  
+        this->deleteFromAllChannels(fd);                                            // Delete the client from lists, structures, etc.  
         this->deleteFromClientList(fd);       
         close(fd);
     }
-    else                                                                            // Si recv devuelve un valor positivo, se han recibido datos
+    else                                                                            // If recv returns a positive value, data has been received
     {
-        client->setBuffer(buffer);                                                  // Guardar los datos en el buffer del cliente se iran acumulando los datos, ya que tcp no garantiza que lleguen completos en un solo paquete
+        client->setBuffer(buffer);                                                  // Save the data in the client buffer, the data will accumulate, since TCP does not guarantee that they arrive complete in a single packet
         std::cout << "Data received: " << client->getBuffer() << std::endl;
         std::cout << "Client fd: " << fd << std::endl;  
-        if (client->getBuffer().find_first_of("\r\n") != std::string::npos)         //Si no devuelve npos, es que ha encontrado el string "\r\n"(fin de linea), que es lo que delimita los mensajes en IRC
-        {                                                                           // y debemos splitear los comandos
-            data = this->parseRecvData(client->getBuffer());                        // Splitearemos usando como delimitador "\r\n", que es lo que separa los comandos en IRC
-            for (size_t i = 0; i < data.size(); i++)                                // Iterar a través de los comandos al macenados en el vector, mandarlos a parsear uno a uno
+        if (client->getBuffer().find_first_of("\r\n") != std::string::npos)         // If it doesn't return npos, it means it has found the string "\r\n" (end of line), which is what delimits messages in IRC
+        {                                                                           // and we need to split the commands
+            data = this->parseRecvData(client->getBuffer());                        // We will split using "\r\n" as a delimiter, which is what separates commands in IRC
+            for (size_t i = 0; i < data.size(); i++)                                // Iterate through the commands stored in the vector, send them to be parsed one by one
             {
-                this->parseCommand(data[i], client->getClientFd());                 // Parsear los comando
+                this->parseCommand(data[i], client->getClientFd());                 // Parse the commands
             }
-            if (this->getUserByFd(fd))                                              // Limpiar el buffer del cliente, si este sigue conectado
+            if (this->getUserByFd(fd))                                              // Clear the client buffer, if the client is still connected
             {    
-                this->getUserByFd(fd)->getBuffer().clear();                         // solo lo limpiamos porque seguiremos interactuando con el cliente                                                          
+                this->getUserByFd(fd)->getBuffer().clear();                         // we only clear it because we will continue interacting with the client                                                          
             }
         }
         else
         {
-            // se ha recibido un mensaje parcial, se espera a recibir el resto
+            // a partial message has been received, waiting to receive the rest
             return;
         }        
     }   
 }
 
-std::vector<std::string> Server::parseRecvData(std::string buffer)  // Parsear los datos recibidos 
+std::vector<std::string> Server::parseRecvData(std::string buffer)  // Parse the received data 
 {
-	std::vector<std::string> returnData;                            // Vector para almacenar los comandos y argumentos
-	std::istringstream iss(buffer);                                 // Convertir el buffer en un stream
-	std::string token;                                              // Tokenizaremos el buffer
-    size_t pos = 0;                                                 // Posicion del token
-	while(std::getline(iss, token))                                 // Iterar a través del stream, tokenizando los datos
-	{
-		pos = token.find_first_of("\r\n");                          // Buscar el string "\r\n" en el token      
-		if(pos != std::string::npos)                                // Si no devuelve npos, es que ha encontrado el string "\r\n"(fin de linea)
-			token = token.substr(0, pos);                           // Copiare el token hasta que encuentre el string "\r\n"
-		returnData.push_back(token);                                // Añadir el token, que contiene un comando y sus argumentos, al vector
-	}
-	return returnData;
+    std::vector<std::string> returnData;                            // Vector to store commands and arguments
+    std::istringstream iss(buffer);                                 // Convert the buffer to a stream
+    std::string token;                                              // We will tokenize the buffer
+    size_t pos = 0;                                                 // Position of the token
+    while(std::getline(iss, token))                                 // Iterate through the stream, tokenizing the data
+    {
+        pos = token.find_first_of("\r\n");                          // Search for the string "\r\n" in the token      
+        if(pos != std::string::npos)                                // If it doesn't return npos, it means it has found the string "\r\n" (end of line)
+            token = token.substr(0, pos);                           // Copy the token until it finds the string "\r\n"
+        returnData.push_back(token);                                // Add the token, which contains a command and its arguments, to the vector
+    }
+    return returnData;
 }
 
 void Server::deleteFromClientList(int fd)
@@ -401,12 +400,12 @@ bool Server::ifClientExist(std::string nick)
 * ------------------------------- COMMAND ----------------------------------- *
 ******************************************************************************/
 
-std::vector<std::string> Server::splitCmd(std::string& command) // Splitearemso el comando por los espacios
+std::vector<std::string> Server::splitCmd(std::string& command) // We will split the command by spaces
 {
-    std::vector<std::string> result;                            // Vector para almacenar los comandos y argumentos
-    std::istringstream iss(command);                            // Convertir el string en un stream
-    std::string token;                                          // Token de cada "palabra" del comando             
-    while (iss >> token)                                        // Iterar a través del stream, tokenizando los datos, por defecto el delimitador es el espacio
+    std::vector<std::string> result;                            // Vector to store commands and arguments
+    std::istringstream iss(command);                            // Convert the string to a stream
+    std::string token;                                          // Token for each "word" of the command             
+    while (iss >> token)                                        // Iterate through the stream, tokenizing the data, by default the delimiter is the space
     {
         result.push_back(token);
     }   
@@ -453,15 +452,14 @@ void Server::printCmd(std::vector<std::string> &splited_cmd)
     std::endl(std::cout);
 }
 void Server::printInfo()
-{
-    
-    //printar lista de canales
+{   
+    //print channels list
     std::cout << "Channels: " << std::endl;
     for (std::map<std::string, Channel *>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
     {
         std::cout << "Channel: " << it->first << std::endl;
         std::cout << "Key: " << it->second->GetKey() << std::endl;
-        //printar lista de usuarios
+        //print user list
         std::cout << "Users: " << std::endl;
         for (size_t i = 0; i < it->second->GetClients().size(); i++)
             std::cout << "[" << i << "]User: " << it->second->GetClients()[i]->getNickname() << std::endl;
@@ -471,14 +469,13 @@ void Server::printInfo()
         std::cout << "Invited: " << std::endl;
         for (size_t i = 0; i < it->second->GetInvitedClients().size(); i++)
             std::cout << "[" << i << "]Invited: " << it->second->GetInvitedClients()[i] << std::endl;
-    }
-    //printar lista de usuarios y sus canales    
+    }  
 }
 void Server::parseCommand(std::string &command, int fd)
 {
-    if (command.empty())                                            // Comprobamos si el comando esta vacio    
+    if (command.empty())                                            // Check if the command is empty  
         return;
-    // if (this->getUserByFd(fd)->getUsername().empty())               // Comprobamos si el usuario esta conectado, quiza dentro de cada comando                          
+    // if (this->getUserByFd(fd)->getUsername().empty())            // Check if the user is connected, maybe within each command                        
     // {
     //     std::string channelName = "";
     //     this->sendError(451, 
@@ -486,13 +483,13 @@ void Server::parseCommand(std::string &command, int fd)
     //             channelName, fd, " :You have not registered\r\n");        
     //     return;
     // }
-    std::vector<std::string> splited_cmd = splitCmd(command);       // Splitear el comando por los espacios
-    CommandType cmdType = CMD_UNKNOWN;                              // Tipo de comando, una variable de tipo CommandType(enum), inicializado a CMD_UNKNOWN
-    if (splited_cmd.size() > 0)                                     // Si el comando spliteado tiene mas de 0 elementos
+    std::vector<std::string> splited_cmd = splitCmd(command);       // Split the command by spaces
+    CommandType cmdType = CMD_UNKNOWN;                              // Command type, a variable of CommandType(enum) type, initialized to CMD_UNKNOWN
+    if (splited_cmd.size() > 0)                                     // If the split command has more than 0 elements
     {
-        cmdType = getCommandType(splited_cmd[0]);                   // Obtener el tipo de comando, el primer elemento del comando spliteado se comapara con los comandos conocidos de enum CommandType
+        cmdType = getCommandType(splited_cmd[0]);                   // Get the command type, the first element of the split command is compared with the known commands from enum CommandType
     }
-    ACommand *commandHandler = NULL;                                // Puntero a la clase abstracta ACommand, inicializado a NULL, lo usaremos para crear los objetos de los comandos
+    ACommand *commandHandler = NULL;                                // Pointer to the abstract class ACommand, initialized to NULL, we will use it to create command objects
     switch (cmdType)                                                
     {
         case CMD_CAP:
@@ -502,9 +499,9 @@ void Server::parseCommand(std::string &command, int fd)
             break;
         case CMD_NICK:
             std::cout << "CMD_NICK" << std::endl;
-            printCmd(splited_cmd);                                  // Imprimir el comando spliteado
-            commandHandler = new Nick(*this);                       // Crear un objeto de la clase correspodiente, pasandole el servidor
-            commandHandler->run(splited_cmd, fd);                   // Llamar al metodo run, que es el metodo virtual pura de la clase abstracta ACommand
+            printCmd(splited_cmd);                                  // Print the split command
+            commandHandler = new Nick(*this);                       // Create an object of the corresponding class, passing the server to it
+            commandHandler->run(splited_cmd, fd);                   // Call the run method, which is the pure virtual method of the abstract class ACommand
             delete commandHandler;
             break;
         case CMD_USER:
@@ -582,8 +579,8 @@ void Server::parseCommand(std::string &command, int fd)
 * ------------------------------- SIGNALS ----------------------------------- *
 ******************************************************************************/
 
-bool Server::_active = true;                                           // Variable estatica, porque se usa en un metodo estatico
-void Server::signalHandler(int signum)                                 // Manejador de señales, se llama cuando se recibe una señal, tambien estatico
+bool Server::_active = true;                                           // Static variable, because it is used in a static method
+void Server::signalHandler(int signum)                                 // Signal handler, called when a signal is received, also static
 {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
     Server::_active = false;

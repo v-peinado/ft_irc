@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:31:07 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/18 17:37:51 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 22:27:17 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,46 +80,46 @@ std::vector<std::string> splitNicknames(const std::string &nicknames, char delim
 void Kick::run(std::vector<std::string> args, int fdClient) 
 {
     if (this->validArgs(args, fdClient) == 0)
-        return;  // Validar los argumentos
+        return;  // Validate the arguments
 
-    std::string channelName = args[1];                      // Nombre del canal
-    std::string nicknameList = args[2];                     // Lista de nicknames a expulsar (posiblemente múltiples, separados por comas)
-    std::string reason = args.size() >= 4 ? args[3] : "";   // Razón de la expulsión (si existe)
-    // Si hay más de una palabra en la razón, se concatenan
+    std::string channelName = args[1];                      // Channel name
+    std::string nicknameList = args[2];                     // List of nicknames to kick (possibly multiple, separated by commas)
+    std::string reason = args.size() >= 4 ? args[3] : "";   // Reason for the kick (if exists)
+    // If there's more than one word in the reason, concatenate them
     for(size_t i = 4; i < args.size(); i++) 
         reason += " " + args[i];
 
-    // Validar si existe el canal
+    // Validate if the channel exists
     if (!this->_server.getChannelByName(channelName)) 
     {
         this->_server.sendError(403, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :No such channel\r\n");
         return;
     }
-    // Validar si el usuario que ejecuta el kick está en el canal
+    // Validate if the user executing the kick is in the channel
     if (!this->_server.getChannelByName(channelName)->isClientInChannel(fdClient)) 
     {
         this->_server.sendError(442, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :You're not on that channel\r\n");
         return;
     }
-    // Validar si el usuario tiene permisos de operador del canal
+    // Validate if the user has channel operator permissions
     if (!this->_server.getChannelByName(channelName)->isClientAdmin(fdClient)) 
     {
         this->_server.sendError(482, this->_server.getUserByFd(fdClient)->getNickname(), channelName, fdClient, " :You're not channel operator\r\n");
         return;
     }
-    // Dividir la lista de nicknames por comas
+    // Split the nickname list by commas
     std::vector<std::string> nicknames = splitNicknames(nicknameList, ',');
 
-    // Iterar sobre cada nickname para aplicar la lógica de expulsión
+    // Iterate over each nickname to apply the kick logic
     for (size_t i = 0; i < nicknames.size(); ++i) 
     {
         std::string nickname = nicknames[i];
 
-        // Validar si el usuario intenta expulsarse a sí mismo
+        // Validate if the user is trying to kick themselves
         if (this->_server.getUserByFd(fdClient)->getNickname() == nickname)   
-            continue;       // No se puede expulsar a sí mismo
+            continue;       // Can't kick yourself
 
-        // Validar si el usuario a expulsar está en el canal
+        // Validate if the user to kick is in the channel
         int targetClientFd = this->_server.getChannelByName(channelName)->GetClientFd(nickname);
         if (!this->_server.getChannelByName(channelName)->isClientInChannel(targetClientFd)) 
         {
@@ -127,26 +127,26 @@ void Kick::run(std::vector<std::string> args, int fdClient)
             continue;
         }
 
-        // Preparar el mensaje de KICK para todos los usuarios en el canal y enviarlo
+        // Prepare the KICK message for all users in the channel and send it
         if (reason.empty())
         {
             std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
-                              "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
-                              " KICK " + channelName + " " + nickname + "\r\n";
+                                "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
+                                " KICK " + channelName + " " + nickname + "\r\n";
             this->_server.getChannelByName(channelName)->sendToAll(kickMsg);
         } 
         else
         {
             std::string kickMsg = ":" + this->_server.getUserByFd(fdClient)->getHostName() +
-                              "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
-                              " KICK " + channelName + " " + nickname + " " + reason + "\r\n";
+                                "@" + this->_server.getUserByFd(fdClient)->getClientIp() +
+                                " KICK " + channelName + " " + nickname + " " + reason + "\r\n";
             this->_server.getChannelByName(channelName)->sendToAll(kickMsg);
         }
 
-        // Expulsar al usuario del canal
+        // Kick the user from the channel
         this->_server.getChannelByName(channelName)->removeClient(targetClientFd);
 
-        // Si el usuario está en la lista de invitados, eliminarlo de la lista
+        // If the user is in the invited list, remove them from the list
         if (this->_server.getChannelByName(channelName)->isClientInvited(targetClientFd)) {
             this->_server.getChannelByName(channelName)->removeInvitedClient(targetClientFd);
         }

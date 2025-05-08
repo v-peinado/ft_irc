@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 19:10:55 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/15 11:21:51 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 22:18:51 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ int main(int argc, char **argv)
     try
     {
         Server server(argv[1], argv[2]);
-        //signal(SIGTSTP, SIG_IGN);                           // Ignorar la señal SIGTSTP, ctrl+z, si no se ignora, el proceso se detiene, para reanudarlo se usa el comando fg %(numero del proceso)
-        signal(SIGPIPE, SIG_IGN);                             // Ignorar la señal SIGPIPE, se produce cuando se intenta escribir en un socket que ha sido cerrado por el cliente
-        signal(SIGINT, Server::signalHandler);                // signalHandler es un metodo estatico de la clase Server, la funcion signal no puede llamar a un metodo de instancia, pero si a un metodo estatico
+        //signal(SIGTSTP, SIG_IGN);                           // Ignore the SIGTSTP signal, ctrl+z, if not ignored, the process will stop, to resume it use the command fg %(process number)
+        signal(SIGPIPE, SIG_IGN);                             // Ignore the SIGPIPE signal, which occurs when trying to write to a socket that has been closed by the client
+        signal(SIGINT, Server::signalHandler);                // signalHandler is a static method of the Server class, the signal function cannot call an instance method, but it can call a static method
 		signal(SIGQUIT, Server::signalHandler);
         server.startServer();
         server.printServerInfo();

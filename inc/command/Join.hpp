@@ -6,7 +6,7 @@
 /*   By: vpeinado <victor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 19:51:25 by vpeinado          #+#    #+#             */
-/*   Updated: 2024/10/17 14:22:06 by vpeinado         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:55:41 by vpeinado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ class Join : public ACommand
 {
     private:
     
-        /*** Orthodox Canonical Form ***/
+        /*** Orthodox Canonical Form (NOT IMPLEMENTED) ***/
         
         Join(const Join &src);
         Join &operator=(const Join &src);
